@@ -21,11 +21,11 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bench-coffee.exampl
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${s.name} — ${s.tagline} у Києві`,
+    default: `${s.name} — ${s.tagline} у Дніпрі`,
     template: `%s · ${s.name}`,
   },
   description: s.description,
-  keywords: ['кав’ярня', 'кава', 'кофе', 'BENCH', 'сніданки', 'Київ', 'coffee shop'],
+  keywords: ['кав’ярня', 'кава', 'кофе', 'КАВОВА', 'сніданки', 'Дніпро', 'coffee shop'],
   authors: [{ name: s.name }],
   applicationName: s.name,
   alternates: { canonical: '/' },
@@ -67,7 +67,7 @@ export default function RootLayout({
     address: {
       '@type': 'PostalAddress',
       streetAddress: s.address,
-      addressLocality: 'Київ',
+      addressLocality: 'Дніпро',
       addressCountry: 'UA',
     },
     geo: { '@type': 'GeoCoordinates', latitude: s.lat, longitude: s.lng },

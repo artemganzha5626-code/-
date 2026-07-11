@@ -12,23 +12,28 @@ const img = (id: string, w = 800) =>
 export const demoContent: SiteContent = {
   live: false,
   settings: {
-    name: 'BENCH',
+    name: 'КАВОВА',
     tagline: 'кав’ярня',
     description:
-      'BENCH — це затишна кав’ярня, де добірне зерно, свіжа випічка та тепле світло створюють ранок, до якого хочеться повертатися.',
+      'КАВОВА — затишна кав’ярня у Дніпрі на Слобожанському проспекті. Добірне зерно, свіжа випічка та тепле світло — місце, куди хочеться повертатися.',
     heroTitle: 'Кава, до якої хочеться повертатися',
     heroSubtitle:
       'Повільна обжарка, чесний смак і місце, де приємно посидіти. Заходьте на каву — і залишайтеся на розмову.',
     heroImage: img('1442512595331-e89e73853f31', 1600),
-    address: 'вул. Хрещатик, 22, Київ, 01001',
-    phone: '+380 44 123 45 67',
+    address: 'проспект Слобожанський, 67к, Дніпро, 49000',
+    // Телефон-заповнювач — змініть у /admin або тут.
+    phone: '+380 67 000 00 00',
     hours: 'Пн–Пт 08:00–21:00 · Сб–Нд 09:00–22:00',
-    instagram: 'https://instagram.com/bench.coffee',
-    mapsUrl: 'https://www.google.com/maps/dir/?api=1&destination=50.4501,30.5234',
-    mapEmbed:
-      'https://maps.google.com/maps?q=50.4501,30.5234&z=16&output=embed',
-    lat: 50.4501,
-    lng: 30.5234,
+    // Instagram-заповнювач — надішліть офіційне посилання, і його буде підставлено.
+    instagram: 'https://www.instagram.com/',
+    mapsUrl: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+      'проспект Слобожанський, 67к, Дніпро',
+    )}`,
+    mapEmbed: `https://maps.google.com/maps?q=${encodeURIComponent(
+      'проспект Слобожанський, 67к, Дніпро',
+    )}&z=16&output=embed`,
+    lat: 48.5127,
+    lng: 35.0975,
   },
   categories: [
     { slug: 'coffee', name: 'Кава', sortOrder: 1 },

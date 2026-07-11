@@ -17,8 +17,12 @@ const config: Config = {
         mocha: '#6F5844', // кавово-коричневий (текст/акцент)
         espresso: '#3B2E25', // еспресо (заголовки)
         graphite: '#2A2622', // глибокий графіт
-        terracotta: '#B5613F', // приглушений теракотовий акцент
-        'terracotta-soft': '#C9825F',
+        // Приємно-яскравий тепло-бурштиновий акцент (заміна теракоти)
+        terracotta: '#C6813C', // карамель/бурштин
+        'terracotta-soft': '#E0A55E',
+        honey: '#F3D9A6', // тілесно-жовтий (світлий кінець градієнта)
+        amber: '#DDA45B', // бурштиновий (середина)
+        cocoa: '#8A5632', // коричневий (темний кінець градієнта)
       },
       fontFamily: {
         display: ['var(--font-display)', 'Georgia', 'serif'],
@@ -27,6 +31,10 @@ const config: Config = {
       boxShadow: {
         soft: '0 20px 60px -25px rgba(59, 46, 37, 0.28)',
         card: '0 12px 40px -18px rgba(59, 46, 37, 0.25)',
+      },
+      backgroundImage: {
+        // М’який перехід тілесно-жовтий → бурштин → коричневий
+        'warm-gradient': 'linear-gradient(100deg, #F5DCA9 0%, #E3AC63 50%, #B87437 100%)',
       },
       keyframes: {
         'fade-up': {

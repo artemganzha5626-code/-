@@ -69,6 +69,11 @@
     @apply mb-3 inline-block text-xs font-semibold uppercase tracking-[0.28em] text-terracotta;
   }
 
+  /* Тепло-бурштиновий градієнтний текст (тілесно-жовтий → коричневий) */
+  .text-gradient-warm {
+    @apply bg-warm-gradient bg-clip-text text-transparent;
+  }
+
   .card {
     @apply rounded-3xl bg-milk shadow-card ring-1 ring-espresso/5;
   }

@@ -1,5 +1,5 @@
 -- ============================================================
---  BENCH — схема бази даних Supabase
+--  КАВОВА — схема бази даних Supabase
 --  Виконайте у Supabase Dashboard → SQL Editor → New query.
 -- ============================================================
 
@@ -9,7 +9,7 @@ create extension if not exists "pgcrypto";
 -- ── Налаштування сайту (один рядок) ──────────────────────────
 create table if not exists public.settings (
   id            uuid primary key default gen_random_uuid(),
-  name          text not null default 'BENCH',
+  name          text not null default 'КАВОВА',
   tagline       text default 'кав’ярня',
   description   text,
   hero_title    text,
@@ -51,7 +51,7 @@ create table if not exists public.menu_items (
 create table if not exists public.gallery_images (
   id          uuid primary key default gen_random_uuid(),
   url         text not null,
-  alt         text default 'BENCH',
+  alt         text default 'КАВОВА',
   sort_order  int default 0,
   created_at  timestamptz default now()
 );
@@ -117,19 +117,19 @@ create policy "admin delete media" on storage.objects
 -- ============================================================
 insert into public.settings (name, tagline, description, hero_title, hero_subtitle, hero_image, address, phone, hours, instagram, maps_url, map_embed, lat, lng)
 values (
-  'BENCH',
+  'КАВОВА',
   'кав’ярня',
-  'BENCH — це затишна кав’ярня, де добірне зерно, свіжа випічка та тепле світло створюють ранок, до якого хочеться повертатися.',
+  'КАВОВА — це затишна кав’ярня, де добірне зерно, свіжа випічка та тепле світло створюють ранок, до якого хочеться повертатися.',
   'Кава, до якої хочеться повертатися',
   'Повільна обжарка, чесний смак і місце, де приємно посидіти. Заходьте на каву — і залишайтеся на розмову.',
   'https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=1600&q=70',
-  'вул. Хрещатик, 22, Київ, 01001',
+  'проспект Слобожанський, 67к, Дніпро, 49000',
   '+380 44 123 45 67',
   'Пн–Пт 08:00–21:00 · Сб–Нд 09:00–22:00',
-  'https://instagram.com/bench.coffee',
-  'https://www.google.com/maps/dir/?api=1&destination=50.4501,30.5234',
-  'https://maps.google.com/maps?q=50.4501,30.5234&z=16&output=embed',
-  50.4501, 30.5234
+  'https://www.instagram.com/',
+  'https://www.google.com/maps/dir/?api=1&destination=%D0%BF%D1%80%D0%BE%D1%81%D0%BF%D0%B5%D0%BA%D1%82%20%D0%A1%D0%BB%D0%BE%D0%B1%D0%BE%D0%B6%D0%B0%D0%BD%D1%81%D1%8C%D0%BA%D0%B8%D0%B9%2C%2067%D0%BA%2C%20%D0%94%D0%BD%D1%96%D0%BF%D1%80%D0%BE',
+  'https://maps.google.com/maps?q=%D0%BF%D1%80%D0%BE%D1%81%D0%BF%D0%B5%D0%BA%D1%82%20%D0%A1%D0%BB%D0%BE%D0%B1%D0%BE%D0%B6%D0%B0%D0%BD%D1%81%D1%8C%D0%BA%D0%B8%D0%B9%2C%2067%D0%BA%2C%20%D0%94%D0%BD%D1%96%D0%BF%D1%80%D0%BE&z=16&output=embed',
+  48.5127, 35.0975
 )
 on conflict do nothing;
 
