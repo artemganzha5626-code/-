@@ -92,7 +92,7 @@ export function Menu({
                 whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ duration: 0.45, delay: (i % 3) * 0.06 }}
-                className="group card cursor-pointer overflow-hidden text-left"
+                className="group card cursor-pointer overflow-hidden text-left ring-1 ring-espresso/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_50px_-14px_rgba(243,217,166,0.75)] hover:ring-2 hover:ring-honey/70 active:ring-honey"
                 onClick={() => setSelected(item)}
               >
                 <button
@@ -111,6 +111,7 @@ export function Menu({
                     <div className="absolute left-3 top-3">
                       <BadgePills badges={item.badges} />
                     </div>
+                    <span className="pointer-events-none absolute inset-0 bg-honey/0 transition-colors duration-300 group-hover:bg-honey/20" />
                   </div>
                   <div className="p-5">
                     <div className="flex items-start justify-between gap-3">

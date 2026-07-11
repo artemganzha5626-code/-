@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { SiteSettings } from '@/types';
-import { CupIcon, InstagramIcon, PhoneIcon, MapPinIcon } from '@/components/icons';
+import { Logo } from '@/components/Logo';
+import { InstagramIcon, PhoneIcon, MapPinIcon } from '@/components/icons';
 
 const nav = [
   { href: '#menu', label: 'Меню' },
@@ -19,10 +20,7 @@ export function Footer({ settings }: { settings: SiteSettings }) {
       <div className="container-x py-14">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <div className="flex items-center gap-2">
-              <CupIcon className="h-7 w-7 text-terracotta-soft" />
-              <span className="font-display text-2xl font-semibold">{settings.name}</span>
-            </div>
+            <Logo className="text-2xl text-cream" />
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-cream/60">
               {settings.description}
             </p>

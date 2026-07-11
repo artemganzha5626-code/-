@@ -46,7 +46,7 @@ export function CoffeeBeansSpotlight() {
       canvas.width = w * dpr;
       canvas.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const density = Math.max(16, Math.min(44, Math.floor((w * h) / 24000)));
+      const density = Math.max(48, Math.min(120, Math.floor((w * h) / 10000)));
       beans = Array.from({ length: density }).map(() => {
         const x = Math.random() * w;
         const y = Math.random() * h;

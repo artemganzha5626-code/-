@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { CupIcon, MenuIcon, CloseIcon } from '@/components/icons';
+import { Logo } from '@/components/Logo';
+import { MenuIcon, CloseIcon } from '@/components/icons';
 import { usePrefersReducedMotion } from '@/lib/hooks';
 
+// Порядок — за хронологією секцій на сторінці.
 const links = [
   { href: '#top', label: 'Головна' },
-  { href: '#menu', label: 'Меню' },
   { href: '#about', label: 'Про нас' },
+  { href: '#menu', label: 'Меню' },
   { href: '#gallery', label: 'Галерея' },
   { href: '#reviews', label: 'Відгуки' },
   { href: '#contacts', label: 'Контакти' },
@@ -26,7 +28,6 @@ export function Navbar({ brand }: { brand: string }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Блокуємо прокрутку тіла, поки відкрите мобільне меню.
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
     return () => {
@@ -34,22 +35,24 @@ export function Navbar({ brand }: { brand: string }) {
     };
   }, [open]);
 
+  // Світла тема шапки, поки ми над темним героєм (не проскролено й меню закрите).
+  const light = !scrolled && !open;
+
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled ? 'glass shadow-[0_1px_0_rgba(59,46,37,0.06)]' : 'bg-transparent'
+        scrolled
+          ? 'glass shadow-[0_1px_0_rgba(59,46,37,0.06)]'
+          : 'bg-gradient-to-b from-graphite/55 to-transparent'
       }`}
     >
       <nav className="container-x flex h-16 items-center justify-between md:h-20">
         <a
           href="#top"
-          className="flex items-center gap-2 text-espresso"
+          className={`transition-colors ${light ? 'text-cream' : 'text-espresso'}`}
           aria-label={`${brand} — на початок`}
         >
-          <CupIcon className="h-6 w-6 text-terracotta" />
-          <span className="font-display text-2xl font-semibold tracking-tight">
-            {brand}
-          </span>
+          <Logo className="text-xl md:text-2xl" />
         </a>
 
         {/* Десктоп-навігація */}
@@ -58,9 +61,11 @@ export function Navbar({ brand }: { brand: string }) {
             <li key={l.href}>
               <a
                 href={l.href}
-                className="relative text-sm font-medium text-espresso/80 transition-colors hover:text-espresso
-                           after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-terracotta
-                           after:transition-all after:duration-300 hover:after:w-full"
+                className={`relative text-sm font-medium transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:transition-all after:duration-300 hover:after:w-full ${
+                  light
+                    ? 'text-cream/85 hover:text-cream after:bg-honey'
+                    : 'text-espresso/80 hover:text-espresso after:bg-terracotta'
+                }`}
               >
                 {l.label}
               </a>
@@ -68,15 +73,13 @@ export function Navbar({ brand }: { brand: string }) {
           ))}
         </ul>
 
-        <a href="#menu" className="btn-accent hidden md:inline-flex">
-          Дивитись меню
-        </a>
-
         {/* Бургер */}
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="flex h-11 w-11 items-center justify-center rounded-full text-espresso ring-1 ring-espresso/15 md:hidden"
+          className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors md:hidden ${
+            light ? 'text-cream ring-1 ring-cream/30' : 'text-espresso ring-1 ring-espresso/15'
+          }`}
           aria-label={open ? 'Закрити меню' : 'Відкрити меню'}
           aria-expanded={open}
         >
@@ -106,11 +109,6 @@ export function Navbar({ brand }: { brand: string }) {
                   </a>
                 </li>
               ))}
-              <li className="pt-2">
-                <a href="#menu" onClick={() => setOpen(false)} className="btn-accent w-full">
-                  Дивитись меню
-                </a>
-              </li>
             </ul>
           </motion.div>
         )}

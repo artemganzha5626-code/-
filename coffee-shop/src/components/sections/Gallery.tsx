@@ -57,7 +57,7 @@ export function Gallery({ images }: { images: GalleryImage[] }) {
               <button
                 type="button"
                 onClick={() => setIndex(i)}
-                className="group relative block w-full overflow-hidden rounded-2xl shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta"
+                className="group relative block w-full overflow-hidden rounded-2xl shadow-card ring-1 ring-transparent transition-all duration-300 hover:shadow-[0_16px_50px_-14px_rgba(243,217,166,0.75)] hover:ring-2 hover:ring-honey/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta active:ring-honey"
                 aria-label={`Відкрити зображення: ${img.alt}`}
               >
                 <Image
@@ -68,7 +68,7 @@ export function Gallery({ images }: { images: GalleryImage[] }) {
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   className="h-auto w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <span className="absolute inset-0 bg-espresso/0 transition-colors duration-300 group-hover:bg-espresso/10" />
+                <span className="absolute inset-0 bg-honey/0 transition-colors duration-300 group-hover:bg-honey/20" />
               </button>
             </Reveal>
           ))}
