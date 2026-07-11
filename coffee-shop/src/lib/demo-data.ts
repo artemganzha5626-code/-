@@ -24,8 +24,7 @@ export const demoContent: SiteContent = {
     // Телефон-заповнювач — змініть у /admin або тут.
     phone: '+380 67 000 00 00',
     hours: 'Пн–Пт 08:00–21:00 · Сб–Нд 09:00–22:00',
-    // Instagram-заповнювач — надішліть офіційне посилання, і його буде підставлено.
-    instagram: 'https://www.instagram.com/',
+    instagram: 'https://www.instagram.com/kavova.ua',
     mapsUrl: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
       'проспект Слобожанський, 67к, Дніпро',
     )}`,

@@ -126,7 +126,7 @@ values (
   'проспект Слобожанський, 67к, Дніпро, 49000',
   '+380 44 123 45 67',
   'Пн–Пт 08:00–21:00 · Сб–Нд 09:00–22:00',
-  'https://www.instagram.com/',
+  'https://www.instagram.com/kavova.ua',
   'https://www.google.com/maps/dir/?api=1&destination=%D0%BF%D1%80%D0%BE%D1%81%D0%BF%D0%B5%D0%BA%D1%82%20%D0%A1%D0%BB%D0%BE%D0%B1%D0%BE%D0%B6%D0%B0%D0%BD%D1%81%D1%8C%D0%BA%D0%B8%D0%B9%2C%2067%D0%BA%2C%20%D0%94%D0%BD%D1%96%D0%BF%D1%80%D0%BE',
   'https://maps.google.com/maps?q=%D0%BF%D1%80%D0%BE%D1%81%D0%BF%D0%B5%D0%BA%D1%82%20%D0%A1%D0%BB%D0%BE%D0%B1%D0%BE%D0%B6%D0%B0%D0%BD%D1%81%D1%8C%D0%BA%D0%B8%D0%B9%2C%2067%D0%BA%2C%20%D0%94%D0%BD%D1%96%D0%BF%D1%80%D0%BE&z=16&output=embed',
   48.5127, 35.0975
