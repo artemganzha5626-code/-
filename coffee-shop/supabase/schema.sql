@@ -38,6 +38,7 @@ create table if not exists public.menu_items (
   id            uuid primary key default gen_random_uuid(),
   category_slug text not null references public.menu_categories(slug) on delete cascade,
   name          text not null,
+  "group"       text,
   description   text,
   price         numeric(10,2) not null default 0,
   image         text,

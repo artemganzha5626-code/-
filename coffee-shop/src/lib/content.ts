@@ -96,6 +96,7 @@ function mapMenuItem(row: Record<string, any>): MenuItem {
     id: String(row.id),
     categorySlug: row.category_slug,
     name: row.name,
+    group: row.group ?? undefined,
     description: row.description ?? '',
     price: Number(row.price ?? 0),
     image: row.image ?? '',

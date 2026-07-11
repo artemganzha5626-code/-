@@ -4,6 +4,8 @@ export interface MenuItem {
   id: string;
   categorySlug: string;
   name: string;
+  /** Підкатегорія (напр. «БІЛА КАВА», «MACAROONS») — показуємо як мітку. */
+  group?: string;
   description: string;
   price: number;
   image: string;

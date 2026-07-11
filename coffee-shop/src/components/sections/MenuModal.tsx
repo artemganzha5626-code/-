@@ -1,11 +1,11 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { MenuItem } from '@/types';
 import { CloseIcon, HeartIcon, HeartFilledIcon } from '@/components/icons';
 import { BadgePills } from '@/components/sections/BadgePills';
+import { MenuVisual } from '@/components/sections/MenuVisual';
 import { usePrefersReducedMotion } from '@/lib/hooks';
 import {
   addLike,
@@ -202,13 +202,11 @@ export function MenuModal({
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="relative z-10 max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-t-3xl bg-milk shadow-soft sm:rounded-3xl"
           >
-            <div className="relative aspect-[16/10] w-full">
-              <Image
-                src={item.image}
-                alt={item.name}
-                fill
+            <div className="relative aspect-[16/10] w-full overflow-hidden">
+              <MenuVisual
+                item={item}
                 sizes="(max-width: 640px) 100vw, 672px"
-                className="object-cover"
+                iconClassName="h-24 w-24"
               />
               <button
                 type="button"
@@ -224,6 +222,11 @@ export function MenuModal({
             </div>
 
             <div className="p-6 sm:p-8">
+              {item.group && (
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-terracotta/80">
+                  {item.group}
+                </p>
+              )}
               <div className="flex items-start justify-between gap-4">
                 <h3 className="font-display text-3xl font-semibold text-espresso">
                   {item.name}
@@ -232,7 +235,9 @@ export function MenuModal({
                   {item.price} ₴
                 </span>
               </div>
-              <p className="mt-4 text-lg leading-relaxed text-mocha">{item.description}</p>
+              {item.description && (
+                <p className="mt-4 text-lg leading-relaxed text-mocha">{item.description}</p>
+              )}
 
               <ItemSocial item={item} />
             </div>

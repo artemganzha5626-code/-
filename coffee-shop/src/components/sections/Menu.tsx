@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import type { MenuCategory, MenuItem } from '@/types';
 import { Reveal } from '@/components/Reveal';
 import { MenuModal } from '@/components/sections/MenuModal';
+import { MenuVisual } from '@/components/sections/MenuVisual';
 import { BadgePills } from '@/components/sections/BadgePills';
 import { HeartIcon } from '@/components/icons';
 import { getLikeCounts } from '@/lib/reactions';
@@ -113,12 +113,9 @@ export function Menu({
                   aria-label={`Детальніше: ${item.name}`}
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
-                    <Image
-                      src={item.image}
-                      alt={item.name}
-                      fill
+                    <MenuVisual
+                      item={item}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div className="absolute left-3 top-3">
                       <BadgePills badges={item.badges} />
@@ -126,6 +123,11 @@ export function Menu({
                     <span className="pointer-events-none absolute inset-0 bg-honey/0 transition-colors duration-300 group-hover:bg-honey/20" />
                   </div>
                   <div className="p-5">
+                    {item.group && (
+                      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-terracotta/80">
+                        {item.group}
+                      </p>
+                    )}
                     <div className="flex items-start justify-between gap-3">
                       <h3 className="font-display text-xl font-semibold text-espresso">
                         {item.name}
@@ -134,9 +136,11 @@ export function Menu({
                         {item.price} ₴
                       </span>
                     </div>
-                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-mocha">
-                      {item.description}
-                    </p>
+                    {item.description && (
+                      <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-mocha">
+                        {item.description}
+                      </p>
+                    )}
                     <div className="mt-3 flex items-center gap-1.5 text-mocha/70">
                       <HeartIcon className="h-4 w-4 text-terracotta" />
                       <span className="text-xs tabular-nums">{likeCounts[item.id] ?? 0}</span>

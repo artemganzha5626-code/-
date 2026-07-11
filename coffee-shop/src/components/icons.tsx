@@ -130,6 +130,43 @@ export function MenuIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+export function WineIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M7 3h10l-1 6a4 4 0 0 1-8 0L7 3Z" />
+      <path d="M12 15v5M8 21h8" />
+    </svg>
+  );
+}
+
+export function CocktailIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M4 4h16l-8 9-8-9Z" />
+      <path d="M12 13v7M8 21h8M15 4l3-1" />
+    </svg>
+  );
+}
+
+export function CakeIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M4 20h16v-6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6Z" />
+      <path d="M4 16c2 1.4 3.3 1.4 5 0s3.3-1.4 5 0 3.3 1.4 5 0" />
+      <path d="M12 6v3M12 4.5V5" />
+    </svg>
+  );
+}
+
+export function LeafIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M5 19c0-8 6-13 14-13 0 8-6 13-14 13Z" />
+      <path d="M5 19c3-4 6-6 10-8" />
+    </svg>
+  );
+}
+
 export function CupIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base} {...props}>
