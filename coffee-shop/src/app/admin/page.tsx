@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -22,7 +22,16 @@ type TabKey = (typeof tabs)[number]['key'];
 
 export default function AdminPage() {
   const [tab, setTab] = useState<TabKey>('settings');
+  const [role, setRole] = useState<'checking' | 'admin' | 'denied'>('checking');
   const router = useRouter();
+
+  useEffect(() => {
+    const supabase = createClient();
+    if (!supabase) return;
+    supabase.rpc('is_admin').then(({ data }) => {
+      setRole(data === true ? 'admin' : 'denied');
+    });
+  }, []);
 
   const logout = async () => {
     const supabase = createClient();
@@ -47,6 +56,36 @@ export default function AdminPage() {
           <Link href="/" className="btn-primary mt-6">
             На головну
           </Link>
+        </div>
+      </main>
+    );
+  }
+
+  if (role === 'checking') {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-sand/40">
+        <p className="text-mocha">Перевірка доступу…</p>
+      </main>
+    );
+  }
+
+  if (role === 'denied') {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-sand/40 px-5">
+        <div className="card max-w-lg p-8 text-center">
+          <h1 className="font-display text-2xl font-semibold text-espresso">Немає доступу</h1>
+          <p className="mt-3 text-mocha">
+            Цей акаунт не є адміністратором. Додайте свій <code>user_id</code> у таблицю{' '}
+            <code>admins</code> (див. README), або увійдіть іншим акаунтом.
+          </p>
+          <div className="mt-6 flex justify-center gap-3">
+            <button onClick={logout} className="btn-ghost">
+              Вийти
+            </button>
+            <Link href="/" className="btn-primary">
+              На головну
+            </Link>
+          </div>
         </div>
       </main>
     );

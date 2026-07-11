@@ -1,12 +1,14 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import type { MenuCategory, MenuItem } from '@/types';
 import { Reveal } from '@/components/Reveal';
 import { MenuModal } from '@/components/sections/MenuModal';
 import { BadgePills } from '@/components/sections/BadgePills';
+import { HeartIcon } from '@/components/icons';
+import { getLikeCounts } from '@/lib/reactions';
 import { usePrefersReducedMotion } from '@/lib/hooks';
 
 const PREVIEW_COUNT = 6;
@@ -21,7 +23,17 @@ export function Menu({
   const [active, setActive] = useState<string>('all');
   const [showAll, setShowAll] = useState(false);
   const [selected, setSelected] = useState<MenuItem | null>(null);
+  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
   const reduced = usePrefersReducedMotion();
+
+  useEffect(() => {
+    getLikeCounts().then(setLikeCounts);
+  }, []);
+
+  const closeModal = () => {
+    setSelected(null);
+    getLikeCounts().then(setLikeCounts); // оновити лічильники після можливого лайка
+  };
 
   const filtered = useMemo(() => {
     const list = items
@@ -125,6 +137,10 @@ export function Menu({
                     <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-mocha">
                       {item.description}
                     </p>
+                    <div className="mt-3 flex items-center gap-1.5 text-mocha/70">
+                      <HeartIcon className="h-4 w-4 text-terracotta" />
+                      <span className="text-xs tabular-nums">{likeCounts[item.id] ?? 0}</span>
+                    </div>
                   </div>
                 </button>
               </motion.article>
@@ -141,7 +157,7 @@ export function Menu({
         )}
       </div>
 
-      <MenuModal item={selected} onClose={() => setSelected(null)} />
+      <MenuModal item={selected} onClose={closeModal} />
     </section>
   );
 }

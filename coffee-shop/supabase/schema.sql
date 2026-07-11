@@ -66,10 +66,43 @@ create table if not exists public.reviews (
   created_at  timestamptz default now()
 );
 
+-- ── Лайки позицій меню ───────────────────────────────────────
+create table if not exists public.menu_reactions (
+  id          uuid primary key default gen_random_uuid(),
+  item_id     text not null,
+  created_at  timestamptz default now()
+);
+
+-- ── Відгуки про окремі позиції меню ──────────────────────────
+create table if not exists public.menu_item_reviews (
+  id          uuid primary key default gen_random_uuid(),
+  item_id     text not null,
+  name        text not null,
+  text        text not null,
+  created_at  timestamptz default now()
+);
+
+-- ── Адміністратори ───────────────────────────────────────────
+-- Лише користувачі з цієї таблиці мають доступ до /admin і запису контенту.
+-- Після створення користувача (Authentication → Users) додайте його id сюди:
+--   insert into public.admins (user_id) values ('<UUID_користувача>');
+create table if not exists public.admins (
+  user_id     uuid primary key references auth.users(id) on delete cascade,
+  created_at  timestamptz default now()
+);
+
+create or replace function public.is_admin() returns boolean
+  language sql stable security definer set search_path = public as $$
+  select exists (select 1 from public.admins where user_id = auth.uid());
+$$;
+
 -- ============================================================
 --  Row Level Security
 -- ============================================================
 alter table public.settings        enable row level security;
+alter table public.menu_reactions    enable row level security;
+alter table public.menu_item_reviews enable row level security;
+alter table public.admins            enable row level security;
 alter table public.menu_categories enable row level security;
 alter table public.menu_items      enable row level security;
 alter table public.gallery_images  enable row level security;
@@ -87,12 +120,25 @@ create policy "public read approved reviews" on public.reviews
 create policy "anyone can submit review" on public.reviews
   for insert with check (approved = false);
 
--- Повний доступ для авторизованих адміністраторів ----------------------------
-create policy "admin all settings"   on public.settings        for all to authenticated using (true) with check (true);
-create policy "admin all categories" on public.menu_categories for all to authenticated using (true) with check (true);
-create policy "admin all menu"       on public.menu_items      for all to authenticated using (true) with check (true);
-create policy "admin all gallery"    on public.gallery_images  for all to authenticated using (true) with check (true);
-create policy "admin all reviews"    on public.reviews         for all to authenticated using (true) with check (true);
+-- Лайки: усі бачать кількість; будь-хто може лайкнути / прибрати свій лайк
+create policy "public read reactions" on public.menu_reactions for select using (true);
+create policy "anyone can like"       on public.menu_reactions for insert with check (true);
+create policy "anyone can unlike"     on public.menu_reactions for delete using (true);
+
+-- Відгуки про позиції: публічне читання й додавання
+create policy "public read item reviews" on public.menu_item_reviews for select using (true);
+create policy "anyone add item review"   on public.menu_item_reviews for insert with check (true);
+create policy "admin manage item reviews" on public.menu_item_reviews for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+-- Адміни бачать лише власний запис (для перевірки ролі)
+create policy "admin read self" on public.admins for select to authenticated using (user_id = auth.uid());
+
+-- Повний доступ лише для адміністраторів (перевірка через is_admin) ------------
+create policy "admin all settings"   on public.settings        for all to authenticated using (public.is_admin()) with check (public.is_admin());
+create policy "admin all categories" on public.menu_categories for all to authenticated using (public.is_admin()) with check (public.is_admin());
+create policy "admin all menu"       on public.menu_items      for all to authenticated using (public.is_admin()) with check (public.is_admin());
+create policy "admin all gallery"    on public.gallery_images  for all to authenticated using (public.is_admin()) with check (public.is_admin());
+create policy "admin all reviews"    on public.reviews         for all to authenticated using (public.is_admin()) with check (public.is_admin());
 
 -- ============================================================
 --  Storage: публічний бакет для фото (bench-media)
@@ -106,11 +152,11 @@ on conflict (id) do nothing;
 create policy "public read media" on storage.objects
   for select using (bucket_id = 'bench-media');
 create policy "admin upload media" on storage.objects
-  for insert to authenticated with check (bucket_id = 'bench-media');
+  for insert to authenticated with check (bucket_id = 'bench-media' and public.is_admin());
 create policy "admin update media" on storage.objects
-  for update to authenticated using (bucket_id = 'bench-media');
+  for update to authenticated using (bucket_id = 'bench-media' and public.is_admin());
 create policy "admin delete media" on storage.objects
-  for delete to authenticated using (bucket_id = 'bench-media');
+  for delete to authenticated using (bucket_id = 'bench-media' and public.is_admin());
 
 -- ============================================================
 --  Початкове наповнення (seed) — прибирайте за потреби

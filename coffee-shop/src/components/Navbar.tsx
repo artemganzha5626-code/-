@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Logo } from '@/components/Logo';
 import { MenuIcon, CloseIcon } from '@/components/icons';
+import { AccountButton } from '@/components/auth/AccountButton';
 import { usePrefersReducedMotion } from '@/lib/hooks';
 
 // Порядок — за хронологією секцій на сторінці.
@@ -56,22 +57,25 @@ export function Navbar({ brand }: { brand: string }) {
         </a>
 
         {/* Десктоп-навігація */}
-        <ul className="hidden items-center gap-7 md:flex">
-          {links.map((l) => (
-            <li key={l.href}>
-              <a
-                href={l.href}
-                className={`relative text-sm font-medium transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:transition-all after:duration-300 hover:after:w-full ${
-                  light
-                    ? 'text-cream/85 hover:text-cream after:bg-honey'
-                    : 'text-espresso/80 hover:text-espresso after:bg-terracotta'
-                }`}
-              >
-                {l.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <div className="hidden items-center gap-7 md:flex">
+          <ul className="flex items-center gap-7">
+            {links.map((l) => (
+              <li key={l.href}>
+                <a
+                  href={l.href}
+                  className={`relative text-sm font-medium transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:transition-all after:duration-300 hover:after:w-full ${
+                    light
+                      ? 'text-cream/85 hover:text-cream after:bg-honey'
+                      : 'text-espresso/80 hover:text-espresso after:bg-terracotta'
+                  }`}
+                >
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <AccountButton light={light} />
+        </div>
 
         {/* Бургер */}
         <button
@@ -109,6 +113,9 @@ export function Navbar({ brand }: { brand: string }) {
                   </a>
                 </li>
               ))}
+              <li className="px-2 pt-3">
+                <AccountButton />
+              </li>
             </ul>
           </motion.div>
         )}

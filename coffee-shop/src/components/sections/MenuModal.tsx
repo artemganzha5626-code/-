@@ -1,12 +1,162 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { MenuItem } from '@/types';
-import { CloseIcon } from '@/components/icons';
+import { CloseIcon, HeartIcon, HeartFilledIcon } from '@/components/icons';
 import { BadgePills } from '@/components/sections/BadgePills';
 import { usePrefersReducedMotion } from '@/lib/hooks';
+import {
+  addLike,
+  removeLike,
+  hasLiked,
+  getLikeCounts,
+  getItemReviews,
+  addItemReview,
+  type ItemReview,
+} from '@/lib/reactions';
+
+function ItemSocial({ item }: { item: MenuItem }) {
+  const [likes, setLikes] = useState(0);
+  const [liked, setLiked] = useState(false);
+  const [reviews, setReviews] = useState<ItemReview[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [name, setName] = useState('');
+  const [text, setText] = useState('');
+  const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    setLiked(hasLiked(item.id));
+    setShowForm(false);
+    getItemReviews(item.id).then((r) => {
+      if (active) setReviews(r);
+    });
+    getLikeCounts().then((map) => {
+      if (active) setLikes(map[item.id] ?? 0);
+    });
+    return () => {
+      active = false;
+    };
+  }, [item.id]);
+
+  const toggleLike = async () => {
+    if (liked) {
+      setLiked(false);
+      setLikes(await removeLike(item.id));
+    } else {
+      setLiked(true);
+      setLikes(await addLike(item.id));
+      setShowForm(true); // після лайка пропонуємо залишити відгук
+    }
+  };
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !text.trim()) return;
+    setSending(true);
+    const review = await addItemReview(item.id, name.trim(), text.trim());
+    setReviews((r) => [review, ...r]);
+    setName('');
+    setText('');
+    setSending(false);
+    setShowForm(false);
+  };
+
+  return (
+    <div className="mt-6 border-t border-espresso/10 pt-5">
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={toggleLike}
+          className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
+            liked
+              ? 'bg-terracotta/15 text-terracotta'
+              : 'bg-sand/70 text-mocha hover:bg-sand'
+          }`}
+          aria-pressed={liked}
+        >
+          {liked ? (
+            <HeartFilledIcon className="h-4 w-4 text-terracotta" />
+          ) : (
+            <HeartIcon className="h-4 w-4" />
+          )}
+          Подобається
+          <span className="tabular-nums">{likes}</span>
+        </button>
+        {!showForm && (
+          <button
+            type="button"
+            onClick={() => setShowForm(true)}
+            className="text-sm font-medium text-mocha underline-offset-4 hover:text-espresso hover:underline"
+          >
+            Залишити відгук
+          </button>
+        )}
+      </div>
+
+      <AnimatePresence>
+        {showForm && (
+          <motion.form
+            onSubmit={submit}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-4 space-y-3">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                maxLength={60}
+                placeholder="Ваше ім’я"
+                className="w-full rounded-xl border border-espresso/15 bg-cream px-4 py-2.5 text-sm outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/25"
+              />
+              <textarea
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                required
+                maxLength={400}
+                rows={3}
+                placeholder={`Ваш відгук про «${item.name}»`}
+                className="w-full resize-none rounded-xl border border-espresso/15 bg-cream px-4 py-2.5 text-sm outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/25"
+              />
+              <div className="flex gap-2">
+                <button type="submit" disabled={sending} className="btn-accent !py-2 !text-sm">
+                  {sending ? 'Надсилаємо…' : 'Опублікувати'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowForm(false)}
+                  className="rounded-full px-4 py-2 text-sm text-mocha hover:bg-espresso/5"
+                >
+                  Скасувати
+                </button>
+              </div>
+            </div>
+          </motion.form>
+        )}
+      </AnimatePresence>
+
+      {reviews.length > 0 && (
+        <div className="mt-5 space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-widest text-mocha/70">
+            Відгуки про позицію ({reviews.length})
+          </p>
+          {reviews.slice(0, 6).map((r, i) => (
+            <div key={i} className="rounded-2xl bg-sand/50 p-3.5">
+              <p className="text-sm font-semibold text-espresso">{r.name}</p>
+              <p className="mt-1 text-sm text-mocha">{r.text}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function MenuModal({
   item,
@@ -50,7 +200,7 @@ export function MenuModal({
             animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
             exit={reduced ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.98 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="relative z-10 w-full max-w-2xl overflow-hidden rounded-t-3xl bg-milk shadow-soft sm:rounded-3xl"
+            className="relative z-10 max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-t-3xl bg-milk shadow-soft sm:rounded-3xl"
           >
             <div className="relative aspect-[16/10] w-full">
               <Image
@@ -83,9 +233,8 @@ export function MenuModal({
                 </span>
               </div>
               <p className="mt-4 text-lg leading-relaxed text-mocha">{item.description}</p>
-              <a href="#contacts" onClick={onClose} className="btn-primary mt-8 w-full sm:w-auto">
-                Замовити в кав’ярні
-              </a>
+
+              <ItemSocial item={item} />
             </div>
           </motion.div>
         </motion.div>

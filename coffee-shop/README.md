@@ -89,7 +89,17 @@ cp .env.example .env.local
 Dashboard → **Authentication** → **Users** → **Add user** →
 введіть email і пароль → **Create user** (позначте *Auto Confirm* або підтвердьте лист).
 
-Це і буде логін до `/admin`.
+Потім зробіть цього користувача адміністратором — **SQL Editor**:
+
+```sql
+insert into public.admins (user_id) values ('<UUID_користувача>');
+```
+
+UUID видно у **Authentication → Users**. Це і буде логін до `/admin`.
+
+> Звичайні відвідувачі теж можуть реєструватися на сайті (кнопка «Увійти»),
+> але доступ до `/admin` і редагування контенту мають **лише** акаунти,
+> додані в таблицю `admins`.
 
 ### 5. Запуск
 
