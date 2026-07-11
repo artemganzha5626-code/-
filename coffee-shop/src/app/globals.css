@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f7f2ea;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem; /* під фіксовану шапку */
+  }
+
+  body {
+    @apply bg-cream text-espresso font-sans antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+
+  ::selection {
+    background: rgba(181, 97, 63, 0.22);
+  }
+
+  /* Повага до налаштування «зменшити рух» */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-6 lg:px-8;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium
+           transition-all duration-300 focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-cream
+           disabled:cursor-not-allowed disabled:opacity-60;
+    min-height: 48px; /* великі, зручні для тапу цілі */
+  }
+
+  .btn-primary {
+    @apply btn bg-espresso text-cream hover:bg-graphite hover:shadow-soft;
+  }
+
+  .btn-accent {
+    @apply btn bg-terracotta text-cream hover:bg-terracotta-soft hover:shadow-soft;
+  }
+
+  .btn-ghost {
+    @apply btn border border-espresso/20 bg-transparent text-espresso hover:border-espresso/40 hover:bg-espresso/5;
+  }
+
+  .section-label {
+    @apply mb-3 inline-block text-xs font-semibold uppercase tracking-[0.28em] text-terracotta;
+  }
+
+  .card {
+    @apply rounded-3xl bg-milk shadow-card ring-1 ring-espresso/5;
+  }
+
+  /* М’яка «скляна» шапка */
+  .glass {
+    background: rgba(247, 242, 234, 0.72);
+    backdrop-filter: saturate(140%) blur(12px);
+    -webkit-backdrop-filter: saturate(140%) blur(12px);
+  }
+}
+
+/* Приховати нативний скролбар у горизонтальних стрічках */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
