@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
-import { isSupabaseConfigured } from '@/lib/supabase/config';
+import { isSupabaseConfigured, supabaseConfigError } from '@/lib/supabase/config';
 import { CloseIcon } from '@/components/icons';
 
 const benefits = [
@@ -43,7 +43,10 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
     const supabase = createClient();
     if (!supabase) {
       setStatus('error');
-      setMessage('Акаунти працюють після підключення Supabase (див. README).');
+      setMessage(
+        supabaseConfigError ??
+          'Акаунти працюють після підключення Supabase (див. README).',
+      );
       return;
     }
     try {
