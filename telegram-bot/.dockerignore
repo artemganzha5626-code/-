@@ -1,0 +1,14 @@
+.git
+.gitignore
+.env
+data/
+credentials/*.json
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+README.md
+TESTING_CHECKLIST.md
