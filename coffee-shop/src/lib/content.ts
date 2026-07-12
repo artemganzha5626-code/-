@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/public';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { demoContent } from '@/lib/demo-data';
 import type {
@@ -20,7 +20,7 @@ export async function getSiteContent(): Promise<SiteContent> {
   if (!isSupabaseConfigured) return demoContent;
 
   try {
-    const supabase = createClient();
+    const supabase = createPublicClient();
     if (!supabase) return demoContent;
 
     const [settingsRes, categoriesRes, menuRes, galleryRes, reviewsRes] =

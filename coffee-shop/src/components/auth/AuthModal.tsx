@@ -63,12 +63,13 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
         setStatus('done');
         onClose();
       }
-    } catch {
+    } catch (err) {
       setStatus('error');
+      const detail = err instanceof Error ? err.message : '';
       setMessage(
-        mode === 'register'
-          ? 'Не вдалося зареєструватися. Можливо, така пошта вже існує.'
-          : 'Невірна пошта або пароль.',
+        (mode === 'register'
+          ? 'Не вдалося зареєструватися.'
+          : 'Не вдалося увійти.') + (detail ? ` (${detail})` : ''),
       );
     }
   };

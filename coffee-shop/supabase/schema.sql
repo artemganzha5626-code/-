@@ -142,22 +142,22 @@ create policy "admin all gallery"    on public.gallery_images  for all to authen
 create policy "admin all reviews"    on public.reviews         for all to authenticated using (public.is_admin()) with check (public.is_admin());
 
 -- ============================================================
---  Storage: публічний бакет для фото (bench-media)
+--  Storage: публічний бакет для фото (kavova-media)
 --  Створіть бакет у Dashboard → Storage → New bucket (public),
 --  назва має збігатися з NEXT_PUBLIC_SUPABASE_BUCKET.
 -- ============================================================
 insert into storage.buckets (id, name, public)
-values ('bench-media', 'bench-media', true)
+values ('kavova-media', 'kavova-media', true)
 on conflict (id) do nothing;
 
 create policy "public read media" on storage.objects
-  for select using (bucket_id = 'bench-media');
+  for select using (bucket_id = 'kavova-media');
 create policy "admin upload media" on storage.objects
-  for insert to authenticated with check (bucket_id = 'bench-media' and public.is_admin());
+  for insert to authenticated with check (bucket_id = 'kavova-media' and public.is_admin());
 create policy "admin update media" on storage.objects
-  for update to authenticated using (bucket_id = 'bench-media' and public.is_admin());
+  for update to authenticated using (bucket_id = 'kavova-media' and public.is_admin());
 create policy "admin delete media" on storage.objects
-  for delete to authenticated using (bucket_id = 'bench-media' and public.is_admin());
+  for delete to authenticated using (bucket_id = 'kavova-media' and public.is_admin());
 
 -- ============================================================
 --  Початкове наповнення (seed) — прибирайте за потреби
