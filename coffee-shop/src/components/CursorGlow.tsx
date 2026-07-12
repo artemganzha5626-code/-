@@ -88,7 +88,7 @@ export function CursorGlow() {
         // Маленьке кавове зерно: овал + характерна борозенка посередині.
         const r = Math.max(0, p.size * Math.min(1, p.life * 1.4));
         if (r <= 0.2) continue;
-        const alpha = Math.max(0, Math.min(1, p.life)) * 0.55;
+        const alpha = Math.max(0, Math.min(1, p.life)) * 0.28;
         ctx.save();
         ctx.translate(p.x, p.y);
         ctx.rotate(p.angle);
@@ -97,8 +97,8 @@ export function CursorGlow() {
         ctx.ellipse(0, 0, r, r * 1.45, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(59, 36, 22, ${alpha})`;
-        ctx.lineWidth = Math.max(0.6, r * 0.28);
+        ctx.strokeStyle = `rgba(59, 36, 22, ${alpha * 0.8})`;
+        ctx.lineWidth = Math.max(0.5, r * 0.24);
         ctx.moveTo(0, -r * 1.15);
         ctx.quadraticCurveTo(r * 0.6, 0, 0, r * 1.15);
         ctx.stroke();

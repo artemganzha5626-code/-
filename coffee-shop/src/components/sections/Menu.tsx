@@ -1,20 +1,34 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import type { MenuCategory, MenuItem } from '@/types';
 import { Reveal } from '@/components/Reveal';
 import { HoverText } from '@/components/HoverText';
-import { PeekMascot } from '@/components/PeekMascot';
+import { PeekMascot, type MascotVariant } from '@/components/PeekMascot';
 import { MenuModal } from '@/components/sections/MenuModal';
 import { MenuVisual } from '@/components/sections/MenuVisual';
 import { BadgePills } from '@/components/sections/BadgePills';
-import { HeartIcon, ArrowIcon } from '@/components/icons';
+import { HeartIcon } from '@/components/icons';
 import { getLikeCounts } from '@/lib/reactions';
 import { spotlightMove } from '@/lib/spotlight';
 import { usePrefersReducedMotion } from '@/lib/hooks';
 
-const PREVIEW_COUNT = 6;
+// Маскот за розділом меню.
+function mascotFor(slug: string): MascotVariant {
+  switch (slug) {
+    case 'bakery':
+      return 'cookie';
+    case 'food':
+      return 'sandwich';
+    case 'bar':
+      return 'cocktail';
+    case 'wine':
+      return 'wine';
+    default:
+      return 'cup'; // напої: ice, hot, seasonal, cold
+  }
+}
 
 export function Menu({
   categories,
@@ -23,101 +37,79 @@ export function Menu({
   categories: MenuCategory[];
   items: MenuItem[];
 }) {
-  const [active, setActive] = useState<string>('all');
-  const [showAll, setShowAll] = useState(false);
   const [selected, setSelected] = useState<MenuItem | null>(null);
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
-  const [announce, setAnnounce] = useState<string | null>(null);
-  const announceTimer = useRef<number | undefined>(undefined);
+  const [activeSlug, setActiveSlug] = useState<string>('');
   const reduced = usePrefersReducedMotion();
 
-  const topRef = useRef<HTMLDivElement>(null);
-  const sentinelRef = useRef<HTMLDivElement>(null);
-  const wasHiddenRef = useRef(false);
-  const coolingRef = useRef(false);
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  const orderedSlugs = useMemo(
-    () => [...categories].sort((a, b) => a.sortOrder - b.sortOrder).map((c) => c.slug),
+  const ordered = useMemo(
+    () => [...categories].sort((a, b) => a.sortOrder - b.sortOrder),
     [categories],
   );
 
+  // Позиції за категоріями (лише доступні, у своєму порядку).
+  const byCategory = useMemo(() => {
+    const map: Record<string, MenuItem[]> = {};
+    for (const cat of ordered) {
+      map[cat.slug] = items
+        .filter((i) => i.available && i.categorySlug === cat.slug)
+        .sort((a, b) => a.sortOrder - b.sortOrder);
+    }
+    return map;
+  }, [ordered, items]);
+
   useEffect(() => {
     getLikeCounts().then(setLikeCounts);
-  }, []);
-
-  // Автоперехід до наступного розділу, коли догорнули до кінця поточного.
-  // Працює лише коли обрано конкретну категорію (не «Все»). Спрацьовує тільки
-  // якщо кінець розділу з’явився після гортання (а не одразу видимий), тож
-  // короткі розділи не «перескакують» самі.
-  useEffect(() => {
-    if (active === 'all') return;
-    const el = sentinelRef.current;
-    if (!el || orderedSlugs.length < 2) return;
-
-    wasHiddenRef.current = false;
-
-    const obs = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (!entry.isIntersecting) {
-          wasHiddenRef.current = true;
-          return;
-        }
-        // З’явився, але користувач ще не гортав повз нього — не чіпаємо.
-        if (!wasHiddenRef.current || coolingRef.current) return;
-
-        coolingRef.current = true;
-        const idx = orderedSlugs.indexOf(active);
-        const nextSlug = orderedSlugs[(idx + 1) % orderedSlugs.length];
-        setActive(nextSlug);
-        setShowAll(false);
-
-        // Показуємо помітний «анонс» нового розділу.
-        const nextName = categories.find((c) => c.slug === nextSlug)?.name ?? '';
-        setAnnounce(nextName);
-        window.clearTimeout(announceTimer.current);
-        announceTimer.current = window.setTimeout(() => setAnnounce(null), 2000);
-
-        // Плавно повертаємось на початок нового розділу.
-        requestAnimationFrame(() => {
-          const top = topRef.current;
-          if (top) {
-            const y = top.getBoundingClientRect().top + window.scrollY - 88;
-            window.scrollTo({ top: y, behavior: reduced ? 'auto' : 'smooth' });
-          }
-        });
-        window.setTimeout(() => {
-          coolingRef.current = false;
-        }, 1100);
-      },
-      { threshold: 0.2, rootMargin: '0px 0px -8% 0px' },
-    );
-
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [active, orderedSlugs, categories, reduced]);
-
-  useEffect(() => () => window.clearTimeout(announceTimer.current), []);
+    if (ordered.length) setActiveSlug(ordered[0].slug);
+  }, [ordered]);
 
   const closeModal = () => {
     setSelected(null);
-    getLikeCounts().then(setLikeCounts); // оновити лічильники після можливого лайка
+    getLikeCounts().then(setLikeCounts);
   };
 
-  const filtered = useMemo(() => {
-    const list = items
-      .filter((i) => i.available)
-      .filter((i) => active === 'all' || i.categorySlug === active)
-      .sort((a, b) => a.sortOrder - b.sortOrder);
-    return list;
-  }, [items, active]);
+  // Scroll-spy: підсвічуємо розділ, що зараз угорі екрана.
+  useEffect(() => {
+    const els = ordered
+      .map((c) => sectionRefs.current[c.slug])
+      .filter((el): el is HTMLDivElement => Boolean(el));
+    if (!els.length) return;
 
-  const visible =
-    active === 'all' && !showAll ? filtered.slice(0, PREVIEW_COUNT) : filtered;
+    const visible = new Map<string, number>();
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const slug = (e.target as HTMLElement).dataset.slug!;
+          if (e.isIntersecting) visible.set(slug, e.boundingClientRect.top);
+          else visible.delete(slug);
+        }
+        if (visible.size) {
+          // Активний — найвищий із видимих розділів.
+          let best = '';
+          let bestTop = Infinity;
+          visible.forEach((top, slug) => {
+            if (top < bestTop) {
+              bestTop = top;
+              best = slug;
+            }
+          });
+          if (best) setActiveSlug(best);
+        }
+      },
+      { rootMargin: '-110px 0px -65% 0px', threshold: [0, 1] },
+    );
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, [ordered]);
 
-  const hasMore = active === 'all' && !showAll && filtered.length > PREVIEW_COUNT;
-
-  const tabs = [{ slug: 'all', name: 'Все' }, ...categories];
+  const scrollToSection = (slug: string) => {
+    const el = sectionRefs.current[slug];
+    if (!el) return;
+    const y = el.getBoundingClientRect().top + window.scrollY - 96;
+    window.scrollTo({ top: y, behavior: reduced ? 'auto' : 'smooth' });
+  };
 
   return (
     <section id="menu" className="scroll-mt-20 bg-sand/40 py-20 sm:py-28">
@@ -128,162 +120,162 @@ export function Menu({
             <HoverText text="Те, що варто скуштувати" />
           </h2>
           <p className="mt-4 text-lg text-mocha">
-            Кава, чай, сніданки, десерти та свіжа випічка. Оберіть категорію або
-            перегляньте все меню.
+            Кава, чай, сніданки, десерти та свіжа випічка. Гортайте розділи —
+            навігація збоку завжди підкаже, де ви.
           </p>
         </Reveal>
 
-        {/* Фільтри */}
-        <div ref={topRef} className="no-scrollbar mt-8 flex scroll-mt-24 gap-2 overflow-x-auto pb-1">
-          {tabs.map((t) => {
-            const isActive = active === t.slug;
-            return (
-              <button
-                key={t.slug}
-                type="button"
-                onClick={() => {
-                  setActive(t.slug);
-                  setShowAll(false);
-                }}
-                aria-pressed={isActive}
-                className={`whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-medium transition-all ${
-                  isActive
-                    ? 'bg-espresso text-cream shadow-card'
-                    : 'bg-milk text-mocha ring-1 ring-espresso/10 hover:ring-espresso/25'
-                }`}
-              >
-                {t.name}
-              </button>
-            );
-          })}
+        {/* Мобільна липка стрічка розділів */}
+        <div className="no-scrollbar sticky top-16 z-30 -mx-5 mt-8 flex gap-2 overflow-x-auto bg-sand/40 px-5 py-2 backdrop-blur lg:hidden">
+          {ordered.map((c) => (
+            <button
+              key={c.slug}
+              type="button"
+              onClick={() => scrollToSection(c.slug)}
+              aria-current={activeSlug === c.slug}
+              className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                activeSlug === c.slug
+                  ? 'bg-espresso text-cream shadow-card'
+                  : 'bg-milk text-mocha ring-1 ring-espresso/10'
+              }`}
+            >
+              {c.name}
+            </button>
+          ))}
         </div>
 
-        {/* Сітка */}
-        {visible.length === 0 ? (
-          <p className="mt-16 text-center text-mocha">
-            У цій категорії поки немає позицій.
-          </p>
-        ) : (
-          <motion.div
-            key={active}
-            initial={reduced ? undefined : { opacity: 0, y: 28 }}
-            animate={reduced ? undefined : { opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {visible.map((item, i) => (
-              <motion.article
-                key={item.id}
-                layout={!reduced}
-                initial={reduced ? undefined : { opacity: 0, y: 20 }}
-                whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.45, delay: (i % 3) * 0.06 }}
-                className="group card cursor-pointer overflow-hidden text-left ring-1 ring-espresso/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_50px_-14px_rgba(243,217,166,0.75)] hover:ring-2 hover:ring-honey/70 active:ring-honey"
-                onClick={() => setSelected(item)}
-              >
-                <button
-                  type="button"
-                  className="block w-full text-left"
-                  aria-label={`Детальніше: ${item.name}`}
+        <div className="mt-8 gap-10 lg:flex lg:items-start">
+          {/* Бічна навігація (десктоп): липка, підсвічує поточний розділ */}
+          <aside className="hidden w-56 flex-none lg:block">
+            <nav className="sticky top-24">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-mocha/60">
+                Розділи меню
+              </p>
+              <ul className="space-y-1 border-l border-espresso/10">
+                {ordered.map((c) => {
+                  const isActive = activeSlug === c.slug;
+                  return (
+                    <li key={c.slug} className="relative">
+                      <button
+                        type="button"
+                        onClick={() => scrollToSection(c.slug)}
+                        aria-current={isActive}
+                        className={`block w-full rounded-r-lg py-2 pl-4 pr-2 text-left text-sm transition-all ${
+                          isActive
+                            ? 'font-semibold text-espresso'
+                            : 'text-mocha/70 hover:text-espresso'
+                        }`}
+                      >
+                        {isActive && (
+                          <motion.span
+                            layoutId="menu-nav-indicator"
+                            className="absolute -left-px top-0 h-full w-[3px] rounded-full bg-terracotta"
+                          />
+                        )}
+                        <span className="flex items-center justify-between gap-2">
+                          {c.name}
+                          <span className="text-[11px] tabular-nums text-mocha/40">
+                            {byCategory[c.slug]?.length ?? 0}
+                          </span>
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+          </aside>
+
+          {/* Контент: усі розділи один за одним */}
+          <div className="min-w-0 flex-1 space-y-16">
+            {ordered.map((cat) => {
+              const list = byCategory[cat.slug] ?? [];
+              if (!list.length) return null;
+              const variant = mascotFor(cat.slug);
+              return (
+                <div
+                  key={cat.slug}
+                  data-slug={cat.slug}
+                  ref={(el) => {
+                    sectionRefs.current[cat.slug] = el;
+                  }}
+                  className="scroll-mt-28"
                 >
-                  <div
-                    className="spotlight relative aspect-[4/3] overflow-hidden"
-                    onMouseMove={spotlightMove}
-                  >
-                    <MenuVisual
-                      item={item}
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    />
-                    <div className="absolute left-3 top-3 z-[4]">
-                      <BadgePills badges={item.badges} />
-                    </div>
-                    <span className="spotlight-glow" aria-hidden />
-                    <PeekMascot
-                      variant={
-                        item.categorySlug === 'bakery' || item.categorySlug === 'food'
-                          ? 'croissant'
-                          : 'cup'
-                      }
-                      side={i % 2 === 0 ? 'right' : 'left'}
-                    />
+                  <div className="mb-6 flex items-baseline gap-3">
+                    <h3 className="font-display text-2xl font-semibold text-espresso sm:text-3xl">
+                      {cat.name}
+                    </h3>
+                    <span className="text-sm text-mocha/50">{list.length}</span>
                   </div>
-                  <div className="p-5">
-                    {item.group && (
-                      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-terracotta/80">
-                        {item.group}
-                      </p>
-                    )}
-                    <div className="flex items-start justify-between gap-3">
-                      <h3 className="font-display text-xl font-semibold text-espresso">
-                        {item.name}
-                      </h3>
-                      <span className="whitespace-nowrap font-display text-lg font-semibold text-terracotta">
-                        {item.price} ₴
-                      </span>
-                    </div>
-                    {item.description && (
-                      <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-mocha">
-                        {item.description}
-                      </p>
-                    )}
-                    <div className="mt-3 flex items-center gap-1.5 text-mocha/70">
-                      <HeartIcon className="h-4 w-4 text-terracotta" />
-                      <span className="text-xs tabular-nums">{likeCounts[item.id] ?? 0}</span>
-                    </div>
+
+                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                    {list.map((item, i) => (
+                      <motion.article
+                        key={item.id}
+                        initial={reduced ? undefined : { opacity: 0, y: 18 }}
+                        whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: '-40px' }}
+                        transition={{ duration: 0.4, delay: (i % 3) * 0.05 }}
+                        className="group card cursor-pointer overflow-hidden text-left ring-1 ring-espresso/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_50px_-14px_rgba(243,217,166,0.75)] hover:ring-2 hover:ring-honey/70 active:ring-honey"
+                        onClick={() => setSelected(item)}
+                      >
+                        <button
+                          type="button"
+                          className="block w-full text-left"
+                          aria-label={`Детальніше: ${item.name}`}
+                        >
+                          <div
+                            className="spotlight relative aspect-[4/3] overflow-hidden"
+                            onMouseMove={spotlightMove}
+                          >
+                            <MenuVisual
+                              item={item}
+                              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 30vw"
+                            />
+                            <div className="absolute left-3 top-3 z-[4]">
+                              <BadgePills badges={item.badges} />
+                            </div>
+                            <span className="spotlight-glow" aria-hidden />
+                            <PeekMascot variant={variant} side={i % 2 === 0 ? 'right' : 'left'} />
+                          </div>
+                          <div className="p-5">
+                            {item.group && (
+                              <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-terracotta/80">
+                                {item.group}
+                              </p>
+                            )}
+                            <div className="flex items-start justify-between gap-3">
+                              <h4 className="font-display text-xl font-semibold text-espresso">
+                                {item.name}
+                              </h4>
+                              <span className="whitespace-nowrap font-display text-lg font-semibold text-terracotta">
+                                {item.price} ₴
+                              </span>
+                            </div>
+                            {item.description && (
+                              <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-mocha">
+                                {item.description}
+                              </p>
+                            )}
+                            <div className="mt-3 flex items-center gap-1.5 text-mocha/70">
+                              <HeartIcon className="h-4 w-4 text-terracotta" />
+                              <span className="text-xs tabular-nums">
+                                {likeCounts[item.id] ?? 0}
+                              </span>
+                            </div>
+                          </div>
+                        </button>
+                      </motion.article>
+                    ))}
                   </div>
-                </button>
-              </motion.article>
-            ))}
-          </motion.div>
-        )}
-
-        {hasMore && (
-          <div className="mt-10 text-center">
-            <button type="button" onClick={() => setShowAll(true)} className="btn-ghost">
-              Дивитись все меню
-            </button>
+                </div>
+              );
+            })}
           </div>
-        )}
-
-        {/* Автоперехід між розділами: коли догортали до кінця — відкриється наступний */}
-        {active !== 'all' && visible.length > 0 && orderedSlugs.length > 1 && (
-          <div className="mt-12 flex flex-col items-center gap-2 text-mocha/70">
-            <p className="text-sm">Гортайте далі — наступний розділ відкриється сам</p>
-            <motion.span
-              aria-hidden
-              animate={reduced ? undefined : { y: [0, 6, 0] }}
-              transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
-              className="text-terracotta"
-            >
-              <ArrowIcon className="h-5 w-5 rotate-90" />
-            </motion.span>
-            <div ref={sentinelRef} aria-hidden className="h-px w-full" />
-          </div>
-        )}
+        </div>
       </div>
 
       <MenuModal item={selected} onClose={closeModal} />
-
-      {/* Помітний анонс автопереходу між розділами */}
-      <AnimatePresence>
-        {announce && (
-          <motion.div
-            initial={{ opacity: 0, y: 24, scale: 0.92 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -12, scale: 0.96 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="pointer-events-none fixed inset-x-0 bottom-10 z-[65] flex justify-center px-4"
-            aria-live="polite"
-          >
-            <span className="inline-flex items-center gap-2.5 rounded-full bg-espresso/95 px-6 py-3 text-cream shadow-soft ring-1 ring-honey/30 backdrop-blur">
-              <ArrowIcon className="h-4 w-4 rotate-90 text-honey" />
-              <span className="text-xs uppercase tracking-[0.2em] text-cream/60">Розділ</span>
-              <span className="font-display text-lg font-semibold text-honey">{announce}</span>
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 }

@@ -99,8 +99,14 @@ export function Hero({ settings }: { settings: SiteSettings }) {
         </motion.p>
       </motion.div>
 
-      {/* М’який перехід у наступну секцію */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-28 bg-gradient-to-b from-transparent to-cream" />
+      {/* М’який, довгий перехід у наступну секцію — без помітної білої смуги */}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-64 sm:h-72"
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(247,242,234,0) 0%, rgba(247,242,234,0.06) 35%, rgba(247,242,234,0.22) 62%, rgba(247,242,234,0.55) 82%, #F7F2EA 100%)',
+        }}
+      />
     </section>
   );
 }
