@@ -144,7 +144,7 @@ export function Menu({
           ))}
         </div>
 
-        <div className="mt-8 gap-10 lg:flex lg:items-start">
+        <div className="mt-8 gap-10 lg:flex">
           {/* Бічна навігація (десктоп): липка, підсвічує поточний розділ */}
           <aside className="hidden w-56 flex-none lg:block">
             <nav className="sticky top-24">
