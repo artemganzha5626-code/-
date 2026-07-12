@@ -1,0 +1,5 @@
+# Зависимости для запуска тестов
+-r requirements.txt
+
+pytest==8.3.4
+pytest-asyncio==0.24.0
