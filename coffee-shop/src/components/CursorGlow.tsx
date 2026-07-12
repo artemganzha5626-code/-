@@ -10,12 +10,14 @@ interface Particle {
   vy: number;
   life: number;
   size: number;
+  angle: number;
+  spin: number;
 }
 
 /**
- * Дуже делікатний ефект за курсором: мʼяке кавове свічення + рідкі
- * дрібні «кавові» частинки. Лише на десктопі з мишею; вимикається
- * за prefers-reduced-motion, щоб не заважати й не навантажувати пристрій.
+ * Дуже делікатний ефект за курсором: мʼяке кавове свічення + слід із
+ * маленьких кавових зерняток, що обертаються й тануть. Лише на десктопі
+ * з мишею; вимикається за prefers-reduced-motion.
  */
 export function CursorGlow() {
   const reduced = usePrefersReducedMotion();
@@ -52,15 +54,17 @@ export function CursorGlow() {
       const dx = pointer.x - last.x;
       const dy = pointer.y - last.y;
       const speed = Math.hypot(dx, dy);
-      // Емітуємо частинку лише за помітного руху — ефект залишається ненавʼязливим.
+      // Емітуємо зернятко лише за помітного руху — ефект залишається ненавʼязливим.
       if (speed > 6 && particles.length < 40) {
         particles.push({
-          x: pointer.x,
-          y: pointer.y,
-          vx: -dx * 0.03 + (Math.random() - 0.5) * 0.3,
-          vy: -dy * 0.03 + (Math.random() - 0.5) * 0.3 - 0.15,
+          x: pointer.x + (Math.random() - 0.5) * 8,
+          y: pointer.y + (Math.random() - 0.5) * 8,
+          vx: -dx * 0.03 + (Math.random() - 0.5) * 0.35,
+          vy: -dy * 0.03 + (Math.random() - 0.5) * 0.35 + 0.25,
           life: 1,
-          size: 1.5 + Math.random() * 2,
+          size: 2.6 + Math.random() * 2.2,
+          angle: Math.random() * Math.PI * 2,
+          spin: (Math.random() - 0.5) * 0.12,
         });
       }
       last = { x: pointer.x, y: pointer.y };
@@ -78,13 +82,27 @@ export function CursorGlow() {
       for (const p of particles) {
         p.x += p.vx;
         p.y += p.vy;
-        p.life -= 0.02;
-        const radius = Math.max(0, p.size * p.life);
-        if (radius <= 0) continue;
+        p.vy += 0.015; // зернятка повільно «осипаються»
+        p.angle += p.spin;
+        p.life -= 0.016;
+        // Маленьке кавове зерно: овал + характерна борозенка посередині.
+        const r = Math.max(0, p.size * Math.min(1, p.life * 1.4));
+        if (r <= 0.2) continue;
+        const alpha = Math.max(0, Math.min(1, p.life)) * 0.55;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.angle);
         ctx.beginPath();
-        ctx.fillStyle = `rgba(111, 88, 68, ${Math.max(0, p.life * 0.35)})`;
-        ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(122, 82, 51, ${alpha})`;
+        ctx.ellipse(0, 0, r, r * 1.45, 0, 0, Math.PI * 2);
         ctx.fill();
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(59, 36, 22, ${alpha})`;
+        ctx.lineWidth = Math.max(0.6, r * 0.28);
+        ctx.moveTo(0, -r * 1.15);
+        ctx.quadraticCurveTo(r * 0.6, 0, 0, r * 1.15);
+        ctx.stroke();
+        ctx.restore();
       }
       raf = requestAnimationFrame(tick);
     };

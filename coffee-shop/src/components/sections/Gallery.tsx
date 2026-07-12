@@ -13,6 +13,13 @@ export function Gallery({ images }: { images: GalleryImage[] }) {
   const [index, setIndex] = useState<number | null>(null);
   const sorted = [...images].sort((a, b) => a.sortOrder - b.sortOrder);
 
+  // Групуємо фото в стосики по 3 (останній може мати менше).
+  const stacks: { img: GalleryImage; index: number }[][] = [];
+  sorted.forEach((img, i) => {
+    if (i % 3 === 0) stacks.push([]);
+    stacks[stacks.length - 1].push({ img, index: i });
+  });
+
   const close = useCallback(() => setIndex(null), []);
   const prev = useCallback(
     () => setIndex((i) => (i === null ? i : (i - 1 + sorted.length) % sorted.length)),
@@ -53,26 +60,45 @@ export function Gallery({ images }: { images: GalleryImage[] }) {
           </p>
         </Reveal>
 
-        <div className="mt-10 columns-2 gap-4 [column-fill:_balance] sm:columns-3 lg:columns-4">
-          {sorted.map((img, i) => (
-            <Reveal key={img.id} delay={(i % 4) * 0.05} className="mb-4 break-inside-avoid">
-              <button
-                type="button"
-                onClick={() => setIndex(i)}
-                onMouseMove={spotlightMove}
-                className="spotlight group relative block w-full overflow-hidden rounded-2xl shadow-card ring-1 ring-transparent transition-all duration-300 hover:shadow-[0_16px_50px_-14px_rgba(243,217,166,0.75)] hover:ring-2 hover:ring-honey/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta active:ring-honey"
-                aria-label={`Відкрити зображення: ${img.alt}`}
-              >
-                <Image
-                  src={img.url}
-                  alt={img.alt}
-                  width={600}
-                  height={i % 3 === 0 ? 800 : 600}
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  className="h-auto w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <span className="spotlight-glow" aria-hidden />
-              </button>
+        {/* Віяла-стопки карток (display cards): картки в стосику, при наведенні
+            обрана випрямляється і виходить на передній план. */}
+        <div className="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+          {stacks.map((stack, si) => (
+            <Reveal key={si} delay={si * 0.08} className="relative">
+              <div className="relative aspect-square">
+                {stack.map(({ img, index: gi }, j) => {
+                  const layout = [
+                    { left: '0%', top: '12%', rotate: '-7deg' },
+                    { left: '16%', top: '6%', rotate: '-1deg' },
+                    { left: '32%', top: '0%', rotate: '6deg' },
+                  ][j]!;
+                  return (
+                    <button
+                      key={img.id}
+                      type="button"
+                      onClick={() => setIndex(gi)}
+                      onMouseMove={spotlightMove}
+                      style={{
+                        left: layout.left,
+                        top: layout.top,
+                        zIndex: j + 1,
+                        ['--rot' as string]: layout.rotate,
+                      }}
+                      className="spotlight group absolute aspect-[3/4] w-[62%] overflow-hidden rounded-2xl shadow-card ring-1 ring-espresso/10 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] [transform:rotate(var(--rot))] hover:!z-40 hover:shadow-[0_24px_60px_-16px_rgba(243,217,166,0.85)] hover:ring-2 hover:ring-honey/70 hover:[transform:rotate(0deg)_translateY(-12px)_scale(1.06)] focus-visible:!z-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:[transform:rotate(0deg)_translateY(-12px)_scale(1.06)]"
+                      aria-label={`Відкрити зображення: ${img.alt}`}
+                    >
+                      <Image
+                        src={img.url}
+                        alt={img.alt}
+                        fill
+                        sizes="(max-width: 640px) 62vw, (max-width: 1024px) 31vw, 21vw"
+                        className="object-cover brightness-[0.97] transition-all duration-500 group-hover:scale-105 group-hover:brightness-105"
+                      />
+                      <span className="spotlight-glow" aria-hidden />
+                    </button>
+                  );
+                })}
+              </div>
             </Reveal>
           ))}
         </div>

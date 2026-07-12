@@ -4,6 +4,7 @@ import Image from 'next/image';
 import type { SiteSettings } from '@/types';
 import { Reveal } from '@/components/Reveal';
 import { HoverText } from '@/components/HoverText';
+import { PeekMascot } from '@/components/PeekMascot';
 import { ClockIcon, BeanIcon, HeartIcon } from '@/components/icons';
 
 // Факти лише з даних кав’ярні — нічого не вигадуємо.
@@ -41,6 +42,7 @@ export function About({ settings }: { settings: SiteSettings }) {
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <span className="pointer-events-none absolute inset-0 bg-honey/0 transition-colors duration-500 group-hover:bg-honey/15" />
+              <PeekMascot variant="croissant" side="left" className="bottom-4" />
             </div>
             <div className="absolute -bottom-6 -right-4 hidden rounded-2xl bg-espresso px-6 py-5 text-cream shadow-soft sm:block">
               <p className="font-display text-3xl font-semibold leading-none">з 2023</p>

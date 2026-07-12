@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import type { MenuCategory, MenuItem } from '@/types';
 import { Reveal } from '@/components/Reveal';
 import { HoverText } from '@/components/HoverText';
+import { PeekMascot } from '@/components/PeekMascot';
 import { MenuModal } from '@/components/sections/MenuModal';
 import { MenuVisual } from '@/components/sections/MenuVisual';
 import { BadgePills } from '@/components/sections/BadgePills';
@@ -26,6 +27,8 @@ export function Menu({
   const [showAll, setShowAll] = useState(false);
   const [selected, setSelected] = useState<MenuItem | null>(null);
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
+  const [announce, setAnnounce] = useState<string | null>(null);
+  const announceTimer = useRef<number | undefined>(undefined);
   const reduced = usePrefersReducedMotion();
 
   const topRef = useRef<HTMLDivElement>(null);
@@ -69,6 +72,12 @@ export function Menu({
         setActive(nextSlug);
         setShowAll(false);
 
+        // Показуємо помітний «анонс» нового розділу.
+        const nextName = categories.find((c) => c.slug === nextSlug)?.name ?? '';
+        setAnnounce(nextName);
+        window.clearTimeout(announceTimer.current);
+        announceTimer.current = window.setTimeout(() => setAnnounce(null), 2000);
+
         // Плавно повертаємось на початок нового розділу.
         requestAnimationFrame(() => {
           const top = topRef.current;
@@ -86,7 +95,9 @@ export function Menu({
 
     obs.observe(el);
     return () => obs.disconnect();
-  }, [active, orderedSlugs, reduced]);
+  }, [active, orderedSlugs, categories, reduced]);
+
+  useEffect(() => () => window.clearTimeout(announceTimer.current), []);
 
   const closeModal = () => {
     setSelected(null);
@@ -153,7 +164,13 @@ export function Menu({
             У цій категорії поки немає позицій.
           </p>
         ) : (
-          <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <motion.div
+            key={active}
+            initial={reduced ? undefined : { opacity: 0, y: 28 }}
+            animate={reduced ? undefined : { opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          >
             {visible.map((item, i) => (
               <motion.article
                 key={item.id}
@@ -182,6 +199,14 @@ export function Menu({
                       <BadgePills badges={item.badges} />
                     </div>
                     <span className="spotlight-glow" aria-hidden />
+                    <PeekMascot
+                      variant={
+                        item.categorySlug === 'bakery' || item.categorySlug === 'food'
+                          ? 'croissant'
+                          : 'cup'
+                      }
+                      side={i % 2 === 0 ? 'right' : 'left'}
+                    />
                   </div>
                   <div className="p-5">
                     {item.group && (
@@ -210,7 +235,7 @@ export function Menu({
                 </button>
               </motion.article>
             ))}
-          </div>
+          </motion.div>
         )}
 
         {hasMore && (
@@ -239,6 +264,26 @@ export function Menu({
       </div>
 
       <MenuModal item={selected} onClose={closeModal} />
+
+      {/* Помітний анонс автопереходу між розділами */}
+      <AnimatePresence>
+        {announce && (
+          <motion.div
+            initial={{ opacity: 0, y: 24, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -12, scale: 0.96 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="pointer-events-none fixed inset-x-0 bottom-10 z-[65] flex justify-center px-4"
+            aria-live="polite"
+          >
+            <span className="inline-flex items-center gap-2.5 rounded-full bg-espresso/95 px-6 py-3 text-cream shadow-soft ring-1 ring-honey/30 backdrop-blur">
+              <ArrowIcon className="h-4 w-4 rotate-90 text-honey" />
+              <span className="text-xs uppercase tracking-[0.2em] text-cream/60">Розділ</span>
+              <span className="font-display text-lg font-semibold text-honey">{announce}</span>
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
