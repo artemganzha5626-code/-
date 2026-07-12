@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Review } from '@/types';
 import { Reveal } from '@/components/Reveal';
+import { HoverText } from '@/components/HoverText';
 import { StarIcon, CloseIcon } from '@/components/icons';
 import { createClient } from '@/lib/supabase/client';
 
@@ -156,7 +157,9 @@ export function Reviews({ reviews }: { reviews: Review[] }) {
             <p className="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.28em] text-terracotta-soft">
               Відгуки
             </p>
-            <h2 className="text-4xl font-semibold sm:text-5xl">Що кажуть гості</h2>
+            <h2 className="text-4xl font-semibold sm:text-5xl">
+              <HoverText text="Що кажуть гості" />
+            </h2>
             <p className="mt-4 text-lg text-cream/70">
               Ми цінуємо кожен відгук — він допомагає нам ставати кращими.
             </p>

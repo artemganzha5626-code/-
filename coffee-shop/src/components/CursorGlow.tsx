@@ -79,9 +79,11 @@ export function CursorGlow() {
         p.x += p.vx;
         p.y += p.vy;
         p.life -= 0.02;
+        const radius = Math.max(0, p.size * p.life);
+        if (radius <= 0) continue;
         ctx.beginPath();
         ctx.fillStyle = `rgba(111, 88, 68, ${Math.max(0, p.life * 0.35)})`;
-        ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
         ctx.fill();
       }
       raf = requestAnimationFrame(tick);

@@ -110,7 +110,7 @@ function mapGallery(row: Record<string, any>): GalleryImage {
   return {
     id: String(row.id),
     url: row.url,
-    alt: row.alt ?? 'BENCH',
+    alt: row.alt ?? 'КАВОВА',
     sortOrder: row.sort_order ?? 0,
   };
 }

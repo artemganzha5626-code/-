@@ -5,7 +5,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { GalleryImage } from '@/types';
 import { Reveal } from '@/components/Reveal';
+import { HoverText } from '@/components/HoverText';
 import { CloseIcon, ArrowIcon } from '@/components/icons';
+import { spotlightMove } from '@/lib/spotlight';
 
 export function Gallery({ images }: { images: GalleryImage[] }) {
   const [index, setIndex] = useState<number | null>(null);
@@ -44,7 +46,7 @@ export function Gallery({ images }: { images: GalleryImage[] }) {
         <Reveal className="max-w-2xl">
           <p className="section-label">Галерея</p>
           <h2 className="text-4xl font-semibold text-espresso sm:text-5xl">
-            Атмосфера в деталях
+            <HoverText text="Атмосфера в деталях" />
           </h2>
           <p className="mt-4 text-lg text-mocha">
             Живі кадри страв, кави та простору. Натисніть, щоб роздивитися ближче.
@@ -57,7 +59,8 @@ export function Gallery({ images }: { images: GalleryImage[] }) {
               <button
                 type="button"
                 onClick={() => setIndex(i)}
-                className="group relative block w-full overflow-hidden rounded-2xl shadow-card ring-1 ring-transparent transition-all duration-300 hover:shadow-[0_16px_50px_-14px_rgba(243,217,166,0.75)] hover:ring-2 hover:ring-honey/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta active:ring-honey"
+                onMouseMove={spotlightMove}
+                className="spotlight group relative block w-full overflow-hidden rounded-2xl shadow-card ring-1 ring-transparent transition-all duration-300 hover:shadow-[0_16px_50px_-14px_rgba(243,217,166,0.75)] hover:ring-2 hover:ring-honey/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta active:ring-honey"
                 aria-label={`Відкрити зображення: ${img.alt}`}
               >
                 <Image
@@ -68,7 +71,7 @@ export function Gallery({ images }: { images: GalleryImage[] }) {
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   className="h-auto w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <span className="absolute inset-0 bg-honey/0 transition-colors duration-300 group-hover:bg-honey/20" />
+                <span className="spotlight-glow" aria-hidden />
               </button>
             </Reveal>
           ))}

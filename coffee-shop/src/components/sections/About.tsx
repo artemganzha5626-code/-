@@ -3,23 +3,25 @@
 import Image from 'next/image';
 import type { SiteSettings } from '@/types';
 import { Reveal } from '@/components/Reveal';
-import { BeanIcon, CroissantIcon, HeartIcon } from '@/components/icons';
+import { HoverText } from '@/components/HoverText';
+import { ClockIcon, BeanIcon, HeartIcon } from '@/components/icons';
 
+// Факти лише з даних кав’ярні — нічого не вигадуємо.
 const perks = [
   {
-    icon: BeanIcon,
-    title: 'Добірне зерно',
-    text: 'Свіжа обжарка щотижня та сезонні лоти. Кожну чашку готуємо на професійному обладнанні.',
+    icon: ClockIcon,
+    title: 'Без вихідних',
+    text: 'Щодня з 8:00 до 21:00 на лівому березі Дніпра, проспект Слобожанський, 67К.',
   },
   {
-    icon: CroissantIcon,
-    title: 'Свіжа випічка',
-    text: 'Круасани й десерти випікаємо щоранку у власній пекарні — з якісного масла та шоколаду.',
+    icon: BeanIcon,
+    title: 'Простір для експериментів',
+    text: 'Класична кавова карта й фільтр, айс-напої та матча, сезонні спешли, випічка й KABOBA BAR.',
   },
   {
     icon: HeartIcon,
-    title: 'Затишна атмосфера',
-    text: 'Тепле світло, мʼяка музика й простір, де приємно працювати, читати чи просто побути.',
+    title: '−10% за екозвичку',
+    text: 'Гостям із власним горнятком чи термосом даруємо знижку на гарячий напій.',
   },
 ];
 
@@ -30,17 +32,18 @@ export function About({ settings }: { settings: SiteSettings }) {
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           {/* Фото інтер’єру */}
           <Reveal className="relative">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-soft sm:aspect-[5/4] lg:aspect-[4/5]">
+            <div className="group relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-soft sm:aspect-[5/4] lg:aspect-[4/5]">
               <Image
                 src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=1000&q=70"
-                alt="Простір кав’ярні BENCH"
+                alt="Простір кав’ярні КАВОВА"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
+              <span className="pointer-events-none absolute inset-0 bg-honey/0 transition-colors duration-500 group-hover:bg-honey/15" />
             </div>
             <div className="absolute -bottom-6 -right-4 hidden rounded-2xl bg-espresso px-6 py-5 text-cream shadow-soft sm:block">
-              <p className="font-display text-3xl font-semibold leading-none">7 років</p>
+              <p className="font-display text-3xl font-semibold leading-none">з 2023</p>
               <p className="mt-1 text-xs uppercase tracking-widest text-cream/70">
                 варимо каву поруч
               </p>
@@ -52,17 +55,25 @@ export function About({ settings }: { settings: SiteSettings }) {
             <Reveal>
               <p className="section-label">Про кав’ярню</p>
               <h2 className="text-4xl font-semibold text-espresso sm:text-5xl">
-                Маленьке місце з великою любовʼю до кави
+                <HoverText text="Кава для сусідів, друзів і всіх, хто заходить" />
               </h2>
             </Reveal>
             <Reveal delay={0.1}>
               <p className="mt-6 text-lg leading-relaxed text-mocha">
-                {settings.description}
+                КАВОВА — це кав’ярня на лівому березі Дніпра, на проспекті Слобожанський, 67К.
+                Ми відчинили двері 11 лютого 2023 року і відтоді щодня, без вихідних, з 8:00 до
+                21:00 варимо каву для тих, хто заходить погрітися чи просто побути в затишку.
               </p>
               <p className="mt-4 leading-relaxed text-mocha/90">
-                Ми віримо, що гарний день починається з чесної чашки кави. Тому обираємо
-                зерно в невеликих обжарників, працюємо на прозорих рецептурах і памʼятаємо
-                улюблені замовлення наших гостей.
+                Наше меню — простір для експериментів: класична кавова карта та фільтр-кава,
+                освіжаючі айс-напої та матча, сезонні спешли (гарбузовий лате восени, глінтвейн
+                узимку), домашня випічка й десерти в стаканчику, легкі сендвічі та салати, а у
+                KABOBA BAR — коктейлі й келих вина для настрою вихідного дня.
+              </p>
+              <p className="mt-4 leading-relaxed text-mocha/90">
+                Ми любимо деталі: прикрашаємо кав’ярню до свят — тепла зимова казка щогрудня,
+                різдвяний настрій, весняний вайб навесні. А гостям із власним горнятком чи
+                термосом даруємо −10% на гарячий напій за екозвичку.
               </p>
             </Reveal>
 

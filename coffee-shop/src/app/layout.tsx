@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Playfair_Display, Inter } from 'next/font/google';
+import { Playfair_Display, Inter, Montserrat } from 'next/font/google';
 import './globals.css';
 import { demoContent } from '@/lib/demo-data';
 
@@ -13,6 +13,14 @@ const inter = Inter({
   subsets: ['latin', 'cyrillic'],
   display: 'swap',
   variable: '--font-sans',
+});
+
+// Геометричний гротеск для лого-словознака КАВОВА (тонке накреслення).
+const montserrat = Montserrat({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['300', '400', '500'],
+  display: 'swap',
+  variable: '--font-logo',
 });
 
 const s = demoContent.settings;
@@ -71,12 +79,12 @@ export default function RootLayout({
       addressCountry: 'UA',
     },
     geo: { '@type': 'GeoCoordinates', latitude: s.lat, longitude: s.lng },
-    openingHours: 'Mo-Fr 08:00-21:00, Sa-Su 09:00-22:00',
+    openingHours: 'Mo-Su 08:00-21:00',
     sameAs: [s.instagram],
   };
 
   return (
-    <html lang="uk" className={`${playfair.variable} ${inter.variable}`}>
+    <html lang="uk" className={`${playfair.variable} ${inter.variable} ${montserrat.variable}`}>
       <body>
         {children}
         <script

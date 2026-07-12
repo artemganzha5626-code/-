@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md">
         <Link href="/" className="mb-8 flex items-center justify-center gap-2 text-espresso">
           <CupIcon className="h-7 w-7 text-terracotta" />
-          <span className="font-display text-3xl font-semibold">BENCH</span>
+          <span className="font-display text-3xl font-semibold">КАВОВА</span>
         </Link>
 
         <div className="card p-8">

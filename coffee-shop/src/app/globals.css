@@ -84,6 +84,37 @@
     backdrop-filter: saturate(140%) blur(12px);
     -webkit-backdrop-filter: saturate(140%) blur(12px);
   }
+
+  /* Прожекторна підсвітка карток (spotlight-card): м’яке жовте світло,
+     що йде за курсором. Координати --mx/--my задаються через onMouseMove. */
+  .spotlight {
+    position: relative;
+  }
+  .spotlight-glow {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    background: radial-gradient(
+      240px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(243, 217, 166, 0.38),
+      rgba(221, 164, 91, 0.16) 42%,
+      transparent 68%
+    );
+  }
+  .spotlight:hover .spotlight-glow,
+  .spotlight:focus-within .spotlight-glow {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-glow {
+    display: none;
+  }
 }
 
 /* Приховати нативний скролбар у горизонтальних стрічках */

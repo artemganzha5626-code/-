@@ -1,14 +1,16 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import type { MenuCategory, MenuItem } from '@/types';
 import { Reveal } from '@/components/Reveal';
+import { HoverText } from '@/components/HoverText';
 import { MenuModal } from '@/components/sections/MenuModal';
 import { MenuVisual } from '@/components/sections/MenuVisual';
 import { BadgePills } from '@/components/sections/BadgePills';
-import { HeartIcon } from '@/components/icons';
+import { HeartIcon, ArrowIcon } from '@/components/icons';
 import { getLikeCounts } from '@/lib/reactions';
+import { spotlightMove } from '@/lib/spotlight';
 import { usePrefersReducedMotion } from '@/lib/hooks';
 
 const PREVIEW_COUNT = 6;
@@ -26,9 +28,65 @@ export function Menu({
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
   const reduced = usePrefersReducedMotion();
 
+  const topRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const wasHiddenRef = useRef(false);
+  const coolingRef = useRef(false);
+
+  const orderedSlugs = useMemo(
+    () => [...categories].sort((a, b) => a.sortOrder - b.sortOrder).map((c) => c.slug),
+    [categories],
+  );
+
   useEffect(() => {
     getLikeCounts().then(setLikeCounts);
   }, []);
+
+  // Автоперехід до наступного розділу, коли догорнули до кінця поточного.
+  // Працює лише коли обрано конкретну категорію (не «Все»). Спрацьовує тільки
+  // якщо кінець розділу з’явився після гортання (а не одразу видимий), тож
+  // короткі розділи не «перескакують» самі.
+  useEffect(() => {
+    if (active === 'all') return;
+    const el = sentinelRef.current;
+    if (!el || orderedSlugs.length < 2) return;
+
+    wasHiddenRef.current = false;
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry.isIntersecting) {
+          wasHiddenRef.current = true;
+          return;
+        }
+        // З’явився, але користувач ще не гортав повз нього — не чіпаємо.
+        if (!wasHiddenRef.current || coolingRef.current) return;
+
+        coolingRef.current = true;
+        const idx = orderedSlugs.indexOf(active);
+        const nextSlug = orderedSlugs[(idx + 1) % orderedSlugs.length];
+        setActive(nextSlug);
+        setShowAll(false);
+
+        // Плавно повертаємось на початок нового розділу.
+        requestAnimationFrame(() => {
+          const top = topRef.current;
+          if (top) {
+            const y = top.getBoundingClientRect().top + window.scrollY - 88;
+            window.scrollTo({ top: y, behavior: reduced ? 'auto' : 'smooth' });
+          }
+        });
+        window.setTimeout(() => {
+          coolingRef.current = false;
+        }, 1100);
+      },
+      { threshold: 0.2, rootMargin: '0px 0px -8% 0px' },
+    );
+
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [active, orderedSlugs, reduced]);
 
   const closeModal = () => {
     setSelected(null);
@@ -56,7 +114,7 @@ export function Menu({
         <Reveal className="max-w-2xl">
           <p className="section-label">Меню</p>
           <h2 className="text-4xl font-semibold text-espresso sm:text-5xl">
-            Те, що варто скуштувати
+            <HoverText text="Те, що варто скуштувати" />
           </h2>
           <p className="mt-4 text-lg text-mocha">
             Кава, чай, сніданки, десерти та свіжа випічка. Оберіть категорію або
@@ -65,7 +123,7 @@ export function Menu({
         </Reveal>
 
         {/* Фільтри */}
-        <div className="no-scrollbar mt-8 flex gap-2 overflow-x-auto pb-1">
+        <div ref={topRef} className="no-scrollbar mt-8 flex scroll-mt-24 gap-2 overflow-x-auto pb-1">
           {tabs.map((t) => {
             const isActive = active === t.slug;
             return (
@@ -112,15 +170,18 @@ export function Menu({
                   className="block w-full text-left"
                   aria-label={`Детальніше: ${item.name}`}
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden">
+                  <div
+                    className="spotlight relative aspect-[4/3] overflow-hidden"
+                    onMouseMove={spotlightMove}
+                  >
                     <MenuVisual
                       item={item}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
-                    <div className="absolute left-3 top-3">
+                    <div className="absolute left-3 top-3 z-[4]">
                       <BadgePills badges={item.badges} />
                     </div>
-                    <span className="pointer-events-none absolute inset-0 bg-honey/0 transition-colors duration-300 group-hover:bg-honey/20" />
+                    <span className="spotlight-glow" aria-hidden />
                   </div>
                   <div className="p-5">
                     {item.group && (
@@ -157,6 +218,22 @@ export function Menu({
             <button type="button" onClick={() => setShowAll(true)} className="btn-ghost">
               Дивитись все меню
             </button>
+          </div>
+        )}
+
+        {/* Автоперехід між розділами: коли догортали до кінця — відкриється наступний */}
+        {active !== 'all' && visible.length > 0 && orderedSlugs.length > 1 && (
+          <div className="mt-12 flex flex-col items-center gap-2 text-mocha/70">
+            <p className="text-sm">Гортайте далі — наступний розділ відкриється сам</p>
+            <motion.span
+              aria-hidden
+              animate={reduced ? undefined : { y: [0, 6, 0] }}
+              transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+              className="text-terracotta"
+            >
+              <ArrowIcon className="h-5 w-5 rotate-90" />
+            </motion.span>
+            <div ref={sentinelRef} aria-hidden className="h-px w-full" />
           </div>
         )}
       </div>

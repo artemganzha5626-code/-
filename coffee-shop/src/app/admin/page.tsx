@@ -98,7 +98,7 @@ export default function AdminPage() {
           <div className="flex items-center gap-2">
             <CupIcon className="h-6 w-6 text-terracotta" />
             <span className="font-display text-xl font-semibold text-espresso">
-              BENCH · Адмінка
+              КАВОВА · Адмінка
             </span>
           </div>
           <div className="flex items-center gap-3">

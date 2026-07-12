@@ -56,7 +56,7 @@ export function CoffeeCup3D() {
           <div className="relative aspect-square w-[78%] max-w-sm overflow-hidden rounded-full shadow-soft ring-1 ring-espresso/10">
             <Image
               src={FALLBACK}
-              alt="Чашка кави BENCH"
+              alt="Чашка кави КАВОВА"
               fill
               sizes="(max-width: 768px) 70vw, 380px"
               className="object-cover"

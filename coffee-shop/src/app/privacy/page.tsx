@@ -5,7 +5,7 @@ import { ArrowIcon } from '@/components/icons';
 
 export const metadata: Metadata = {
   title: 'Політика конфіденційності',
-  description: 'Як BENCH обробляє персональні дані відвідувачів сайту.',
+  description: 'Як КАВОВА обробляє персональні дані відвідувачів сайту.',
   robots: { index: true, follow: true },
 };
 

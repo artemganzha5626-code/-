@@ -18,7 +18,7 @@ export function SettingsPanel() {
       const supabase = createClient();
       if (!supabase) return setLoading(false);
       const { data } = await supabase.from('settings').select('*').limit(1).maybeSingle();
-      setRow(data ?? { name: 'BENCH' });
+      setRow(data ?? { name: 'КАВОВА' });
       setLoading(false);
     })();
   }, []);

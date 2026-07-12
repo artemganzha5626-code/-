@@ -2,6 +2,7 @@
 
 import type { SiteSettings } from '@/types';
 import { Reveal } from '@/components/Reveal';
+import { HoverText } from '@/components/HoverText';
 import {
   PhoneIcon,
   MapPinIcon,
@@ -25,7 +26,7 @@ export function Contacts({ settings }: { settings: SiteSettings }) {
         <Reveal className="max-w-2xl">
           <p className="section-label">Контакти</p>
           <h2 className="text-4xl font-semibold text-espresso sm:text-5xl">
-            Завітайте на каву
+            <HoverText text="Завітайте на каву" />
           </h2>
           <p className="mt-4 text-lg text-mocha">
             Ми поруч і завжди раді гостям. Телефонуйте, пишіть або прокладіть маршрут — до
@@ -84,7 +85,7 @@ export function Contacts({ settings }: { settings: SiteSettings }) {
           <Reveal delay={0.1} className="overflow-hidden rounded-3xl shadow-card ring-1 ring-espresso/5">
             <iframe
               src={settings.mapEmbed}
-              title="Карта — розташування BENCH"
+              title="Карта — розташування КАВОВА"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               className="h-full min-h-[320px] w-full border-0"

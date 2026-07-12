@@ -59,7 +59,13 @@ export function Hero({ settings }: { settings: SiteSettings }) {
 
         <h1 className="max-w-4xl font-display text-5xl font-semibold leading-[1.04] sm:text-6xl lg:text-7xl">
           {titleWords.map((word, i) => (
-            <motion.span key={i} variants={item} className="mr-[0.28em] inline-block">
+            <motion.span
+              key={i}
+              variants={item}
+              whileHover={reduced ? undefined : { y: -6, scale: 1.03 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+              className="mr-[0.28em] inline-block cursor-default"
+            >
               <span className="text-gradient-warm">{word}</span>
             </motion.span>
           ))}

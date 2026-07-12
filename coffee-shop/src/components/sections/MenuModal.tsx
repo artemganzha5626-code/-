@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { MenuItem } from '@/types';
 import { CloseIcon, HeartIcon, HeartFilledIcon } from '@/components/icons';
@@ -166,6 +167,8 @@ export function MenuModal({
   onClose: () => void;
 }) {
   const reduced = usePrefersReducedMotion();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -179,7 +182,9 @@ export function MenuModal({
     };
   }, [item, onClose]);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {item && (
         <motion.div
@@ -244,6 +249,7 @@ export function MenuModal({
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }
