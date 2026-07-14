@@ -125,3 +125,34 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* ── Маскот-сценка у вікні входу ─────────────────────────────── */
+@keyframes mascot-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes mascot-leg-a {
+  0%, 100% { transform: rotate(22deg); }
+  50% { transform: rotate(-22deg); }
+}
+@keyframes mascot-leg-b {
+  0%, 100% { transform: rotate(-22deg); }
+  50% { transform: rotate(22deg); }
+}
+@keyframes mascot-wave {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-26deg); }
+}
+.mascot-idle .mascot-body { animation: mascot-bob 2.4s ease-in-out infinite; }
+.mascot-idle .mascot-arm-wave { animation: mascot-wave 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: top center; }
+.mascot-running .mascot-body { animation: mascot-bob 0.28s ease-in-out infinite; }
+.mascot-running .mascot-leg-a { animation: mascot-leg-a 0.28s linear infinite; transform-box: fill-box; transform-origin: top center; }
+.mascot-running .mascot-leg-b { animation: mascot-leg-b 0.28s linear infinite; transform-box: fill-box; transform-origin: top center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mascot-idle .mascot-body,
+  .mascot-idle .mascot-arm-wave,
+  .mascot-running .mascot-body,
+  .mascot-running .mascot-leg-a,
+  .mascot-running .mascot-leg-b { animation: none; }
+}

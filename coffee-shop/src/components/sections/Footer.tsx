@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { SiteSettings } from '@/types';
 import { Logo } from '@/components/Logo';
-import { InstagramIcon, PhoneIcon, MapPinIcon } from '@/components/icons';
+import { InstagramIcon, PhoneIcon, MapPinIcon, ClockIcon } from '@/components/icons';
 
 const nav = [
   { href: '#menu', label: 'Меню' },
@@ -13,6 +13,7 @@ const nav = [
 
 export function Footer({ settings }: { settings: SiteSettings }) {
   const year = new Date().getFullYear();
+  const hasPhone = Boolean(settings.phone && settings.phone.trim());
   const telHref = `tel:${settings.phone.replace(/[^\d+]/g, '')}`;
 
   return (
@@ -55,11 +56,17 @@ export function Footer({ settings }: { settings: SiteSettings }) {
                 <MapPinIcon className="mt-0.5 h-4 w-4 flex-none text-terracotta-soft" />
                 {settings.address}
               </li>
-              <li>
-                <a href={telHref} className="flex items-center gap-2.5 transition hover:text-cream">
-                  <PhoneIcon className="h-4 w-4 flex-none text-terracotta-soft" />
-                  {settings.phone}
-                </a>
+              {hasPhone && (
+                <li>
+                  <a href={telHref} className="flex items-center gap-2.5 transition hover:text-cream">
+                    <PhoneIcon className="h-4 w-4 flex-none text-terracotta-soft" />
+                    {settings.phone}
+                  </a>
+                </li>
+              )}
+              <li className="flex items-center gap-2.5">
+                <ClockIcon className="h-4 w-4 flex-none text-terracotta-soft" />
+                {settings.hours}
               </li>
             </ul>
           </div>

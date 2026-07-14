@@ -54,8 +54,7 @@ export function Menu({
     const map: Record<string, MenuItem[]> = {};
     for (const cat of ordered) {
       map[cat.slug] = items
-        // Показуємо лише позиції з реальним фото — без плиток-заглушок.
-        .filter((i) => i.available && i.categorySlug === cat.slug && i.image)
+        .filter((i) => i.available && i.categorySlug === cat.slug)
         .sort((a, b) => a.sortOrder - b.sortOrder);
     }
     return map;

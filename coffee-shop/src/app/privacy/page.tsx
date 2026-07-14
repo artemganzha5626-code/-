@@ -52,7 +52,8 @@ export default async function PrivacyPage() {
         <section>
           <h2 className="font-display text-2xl font-semibold text-espresso">Контакти</h2>
           <p className="mt-2 leading-relaxed">
-            З питань обробки персональних даних звертайтеся: {settings.phone},{' '}
+            З питань обробки персональних даних звертайтеся:{' '}
+            {settings.phone ? `${settings.phone}, ` : ''}
             {settings.address}.
           </p>
         </section>

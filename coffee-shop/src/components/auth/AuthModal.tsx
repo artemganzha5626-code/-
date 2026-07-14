@@ -4,14 +4,9 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
-import { isSupabaseConfigured, supabaseConfigError } from '@/lib/supabase/config';
+import { supabaseConfigError } from '@/lib/supabase/config';
 import { CloseIcon } from '@/components/icons';
-
-const benefits = [
-  'Простіший і швидший процес оформлення замовлення',
-  'Додаткові функції',
-  'Доступ до історії замовлень',
-];
+import { MascotScene } from '@/components/auth/MascotScene';
 
 export function AuthModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [mode, setMode] = useState<'login' | 'register'>('login');
@@ -176,34 +171,17 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
               </form>
             </div>
 
-            {/* Переваги */}
+            {/* Інтерактивна сценка з маскотом */}
             <div className="relative hidden flex-col justify-center bg-espresso p-8 text-cream md:flex">
               <button
                 type="button"
                 onClick={onClose}
-                className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-cream/80 hover:bg-cream/10"
+                className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full text-cream/80 hover:bg-cream/10"
                 aria-label="Закрити"
               >
                 <CloseIcon className="h-5 w-5" />
               </button>
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-terracotta-soft">
-                Переваги реєстрації
-              </p>
-              <ul className="mt-5 space-y-4">
-                {benefits.map((b) => (
-                  <li key={b} className="flex items-start gap-3">
-                    <span className="mt-1 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-terracotta text-xs text-cream">
-                      ✓
-                    </span>
-                    <span className="text-cream/90">{b}</span>
-                  </li>
-                ))}
-              </ul>
-              {!isSupabaseConfigured && (
-                <p className="mt-8 text-xs text-cream/50">
-                  Демо-режим: акаунти активуються після підключення Supabase.
-                </p>
-              )}
+              <MascotScene />
             </div>
           </motion.div>
         </motion.div>

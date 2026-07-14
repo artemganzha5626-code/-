@@ -22,8 +22,8 @@ export const demoContent: SiteContent = {
       'Повільна обжарка, чесний смак і місце, де приємно посидіти. Заходьте на каву — і залишайтеся на розмову.',
     heroImage: img('1442512595331-e89e73853f31', 1600),
     address: 'проспект Слобожанський, 67к, Дніпро, 49000',
-    // Телефон-заповнювач — змініть у /admin або тут.
-    phone: '+380 67 000 00 00',
+    // Телефон не публікуємо (як і на реальному профілі кав’ярні).
+    phone: '',
     hours: 'Щодня, без вихідних · 08:00–21:00',
     instagram: 'https://www.instagram.com/kavova.ua',
     mapsUrl: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(

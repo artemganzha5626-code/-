@@ -12,11 +12,12 @@ import {
 } from '@/components/icons';
 
 export function Contacts({ settings }: { settings: SiteSettings }) {
+  const hasPhone = Boolean(settings.phone && settings.phone.trim());
   const telHref = `tel:${settings.phone.replace(/[^\d+]/g, '')}`;
 
   const rows = [
     { icon: MapPinIcon, label: 'Адреса', value: settings.address },
-    { icon: PhoneIcon, label: 'Телефон', value: settings.phone },
+    ...(hasPhone ? [{ icon: PhoneIcon, label: 'Телефон', value: settings.phone }] : []),
     { icon: ClockIcon, label: 'Графік роботи', value: settings.hours },
   ];
 
@@ -29,7 +30,7 @@ export function Contacts({ settings }: { settings: SiteSettings }) {
             <HoverText text="Завітайте на каву" />
           </h2>
           <p className="mt-4 text-lg text-mocha">
-            Ми поруч і завжди раді гостям. Телефонуйте, пишіть або прокладіть маршрут — до
+            Ми поруч і завжди раді гостям. Пишіть в Instagram або прокладіть маршрут — до
             зустрічі!
           </p>
         </Reveal>
@@ -55,15 +56,17 @@ export function Contacts({ settings }: { settings: SiteSettings }) {
               </ul>
 
               <div className="mt-8 flex flex-wrap gap-3">
-                <a href={telHref} className="btn-primary flex-1 sm:flex-none">
-                  <PhoneIcon className="h-4 w-4" />
-                  Подзвонити
-                </a>
+                {hasPhone && (
+                  <a href={telHref} className="btn-primary flex-1 sm:flex-none">
+                    <PhoneIcon className="h-4 w-4" />
+                    Подзвонити
+                  </a>
+                )}
                 <a
                   href={settings.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-ghost flex-1 sm:flex-none"
+                  className="btn-primary flex-1 sm:flex-none"
                 >
                   <InstagramIcon className="h-4 w-4" />
                   Instagram

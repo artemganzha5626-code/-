@@ -24,7 +24,7 @@ const montserrat = Montserrat({
 });
 
 const s = demoContent.settings;
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bench-coffee.example.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kavova.vercel.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -69,7 +69,7 @@ export default function RootLayout({
     description: s.description,
     image: s.heroImage,
     url: siteUrl,
-    telephone: s.phone,
+    ...(s.phone ? { telephone: s.phone } : {}),
     servesCuisine: ['Кава', 'Сніданки', 'Десерти'],
     priceRange: '₴₴',
     address: {
