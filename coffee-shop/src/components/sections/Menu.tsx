@@ -54,16 +54,23 @@ export function Menu({
     const map: Record<string, MenuItem[]> = {};
     for (const cat of ordered) {
       map[cat.slug] = items
-        .filter((i) => i.available && i.categorySlug === cat.slug)
+        // Показуємо лише позиції з реальним фото — без плиток-заглушок.
+        .filter((i) => i.available && i.categorySlug === cat.slug && i.image)
         .sort((a, b) => a.sortOrder - b.sortOrder);
     }
     return map;
   }, [ordered, items]);
 
+  // Розділи, у яких лишились позиції з фото — саме вони й відображаються.
+  const visibleCategories = useMemo(
+    () => ordered.filter((c) => (byCategory[c.slug]?.length ?? 0) > 0),
+    [ordered, byCategory],
+  );
+
   useEffect(() => {
     getLikeCounts().then(setLikeCounts);
-    if (ordered.length) setActiveSlug(ordered[0].slug);
-  }, [ordered]);
+    if (visibleCategories.length) setActiveSlug(visibleCategories[0].slug);
+  }, [visibleCategories]);
 
   const closeModal = () => {
     setSelected(null);
@@ -72,7 +79,7 @@ export function Menu({
 
   // Scroll-spy: підсвічуємо розділ, що зараз угорі екрана.
   useEffect(() => {
-    const els = ordered
+    const els = visibleCategories
       .map((c) => sectionRefs.current[c.slug])
       .filter((el): el is HTMLDivElement => Boolean(el));
     if (!els.length) return;
@@ -102,7 +109,7 @@ export function Menu({
     );
     els.forEach((el) => obs.observe(el));
     return () => obs.disconnect();
-  }, [ordered]);
+  }, [visibleCategories]);
 
   const scrollToSection = (slug: string) => {
     const el = sectionRefs.current[slug];
@@ -127,7 +134,7 @@ export function Menu({
 
         {/* Мобільна липка стрічка розділів */}
         <div className="no-scrollbar sticky top-16 z-30 -mx-5 mt-8 flex gap-2 overflow-x-auto bg-sand/40 px-5 py-2 backdrop-blur lg:hidden">
-          {ordered.map((c) => (
+          {visibleCategories.map((c) => (
             <button
               key={c.slug}
               type="button"
@@ -152,7 +159,7 @@ export function Menu({
                 Розділи меню
               </p>
               <ul className="space-y-1 border-l border-espresso/10">
-                {ordered.map((c) => {
+                {visibleCategories.map((c) => {
                   const isActive = activeSlug === c.slug;
                   return (
                     <li key={c.slug} className="relative">
@@ -188,9 +195,8 @@ export function Menu({
 
           {/* Контент: усі розділи один за одним */}
           <div className="min-w-0 flex-1 space-y-16">
-            {ordered.map((cat) => {
+            {visibleCategories.map((cat) => {
               const list = byCategory[cat.slug] ?? [];
-              if (!list.length) return null;
               const variant = mascotFor(cat.slug);
               return (
                 <div

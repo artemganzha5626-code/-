@@ -14,7 +14,7 @@ export const kavovaCategories: MenuCategory[] = [
 
 export const kavovaMenu: MenuItem[] = [
   { id: 'ice-0', categorySlug: 'ice', name: 'Бамбл', group: 'Кава', description: '', price: 95, image: '/menu/ice-0.png', badges: [], sortOrder: 1, available: true },
-  { id: 'ice-1', categorySlug: 'ice', name: 'Айс матча лате', group: 'Матча', description: '', price: 155, image: '', badges: [], sortOrder: 2, available: true },
+  { id: 'ice-1', categorySlug: 'ice', name: 'Айс матча лате', group: 'Матча', description: '', price: 155, image: '/menu/ice-1.jpeg', badges: [], sortOrder: 2, available: true },
   { id: 'ice-2', categorySlug: 'ice', name: 'Айс Какао', group: 'Не кава', description: '', price: 95, image: '', badges: [], sortOrder: 3, available: true },
   { id: 'ice-3', categorySlug: 'ice', name: 'Еспресо-тонік', group: 'Кава', description: '', price: 95, image: '', badges: [], sortOrder: 4, available: true },
   { id: 'ice-4', categorySlug: 'ice', name: 'Банана матча', group: 'Матча', description: '', price: 155, image: '/menu/ice-4.jpeg', badges: [], sortOrder: 5, available: true },
@@ -31,7 +31,7 @@ export const kavovaMenu: MenuItem[] = [
   { id: 'bar-15', categorySlug: 'bar', name: 'Gin Tonic', group: 'Коктейлі', description: 'Джин, Schweppes, тонік, лайм, лід', price: 185, image: '', badges: [], sortOrder: 3, available: true },
   { id: 'bar-16', categorySlug: 'bar', name: 'Pornstar', group: 'Коктейлі', description: '', price: 255, image: '/menu/bar-16.jpeg', badges: [], sortOrder: 4, available: true },
   { id: 'bar-17', categorySlug: 'bar', name: 'Aperol Spritz', group: 'Коктейлі', description: '', price: 255, image: '/menu/bar-17.jpeg', badges: [], sortOrder: 5, available: true },
-  { id: 'bar-18', categorySlug: 'bar', name: 'Mojito', group: 'Коктейлі', description: '', price: 185, image: '', badges: [], sortOrder: 6, available: true },
+  { id: 'bar-18', categorySlug: 'bar', name: 'Mojito', group: 'Коктейлі', description: '', price: 185, image: '/menu/bar-18.jpeg', badges: [], sortOrder: 6, available: true },
   { id: 'bar-19', categorySlug: 'bar', name: 'Sunrise', group: 'Коктейлі', description: '', price: 185, image: '/menu/bar-19.jpeg', badges: [], sortOrder: 7, available: true },
   { id: 'bar-20', categorySlug: 'bar', name: 'Strawberry Gin Tonic Beefeater', group: 'Коктейлі', description: '', price: 185, image: '/menu/bar-20.jpeg', badges: [], sortOrder: 8, available: true },
   { id: 'bar-21', categorySlug: 'bar', name: 'Orange Gin Tonic Beefeater', group: 'Коктейлі', description: '', price: 185, image: '/menu/bar-21.jpeg', badges: [], sortOrder: 9, available: true },
