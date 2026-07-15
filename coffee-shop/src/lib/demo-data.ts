@@ -46,6 +46,7 @@ export const demoContent: SiteContent = {
     { id: 'g6', url: img('1445116572660-236099ec97a0', 900), alt: 'Сніданок на дерев’яному столі', sortOrder: 6 },
     { id: 'g7', url: img('1453614512568-c4024d13c247', 900), alt: 'Кавові зерна', sortOrder: 7 },
     { id: 'g8', url: img('1481833761820-0509d3217039', 900), alt: 'Тепле світло у залі', sortOrder: 8 },
+    { id: 'g9', url: img('1442512595331-e89e73853f31', 900), alt: 'Кава на дерев’яній стільниці', sortOrder: 9 },
   ],
   reviews: [
     {

@@ -20,7 +20,7 @@ export function Gallery({ images }: { images: GalleryImage[] }) {
     if (i % 3 === 0) allStacks.push([]);
     allStacks[allStacks.length - 1].push({ img, index: i });
   });
-  const stacks = allStacks.filter((s) => s.length === 3).slice(0, 2);
+  const stacks = allStacks.filter((s) => s.length === 3).slice(0, 3);
 
   const close = useCallback(() => setIndex(null), []);
   const prev = useCallback(
@@ -64,7 +64,7 @@ export function Gallery({ images }: { images: GalleryImage[] }) {
 
         {/* Віяла-стопки карток (display cards): картки в стосику, при наведенні
             обрана випрямляється і виходить на передній план. */}
-        <div className="mt-8 grid grid-cols-2 gap-4 sm:mt-12 sm:gap-10">
+        <div className="mt-8 grid grid-cols-3 gap-2.5 sm:mt-12 sm:gap-10">
           {stacks.map((stack, si) => (
             <Reveal key={si} delay={si * 0.08} className="relative">
               <div className="relative aspect-square">

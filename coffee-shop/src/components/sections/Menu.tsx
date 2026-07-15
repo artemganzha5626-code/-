@@ -235,6 +235,7 @@ export function Menu({
                         key={item.id}
                         className="group card cursor-pointer overflow-hidden text-left ring-1 ring-espresso/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_50px_-14px_rgba(243,217,166,0.75)] hover:ring-2 hover:ring-honey/70 active:ring-honey"
                         onClick={() => setSelected(item)}
+                        onTouchStart={() => {}}
                       >
                         <button
                           type="button"
