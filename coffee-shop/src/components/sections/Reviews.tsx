@@ -150,7 +150,7 @@ export function Reviews({ reviews }: { reviews: Review[] }) {
   const approved = reviews.filter((r) => r.approved);
 
   return (
-    <section id="reviews" className="scroll-mt-20 bg-espresso py-20 text-cream sm:py-28">
+    <section id="reviews" className="scroll-mt-20 bg-espresso py-14 text-cream sm:py-28">
       <div className="container-x">
         <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <Reveal className="max-w-2xl">
@@ -176,16 +176,18 @@ export function Reviews({ reviews }: { reviews: Review[] }) {
             Відгуків поки немає — станьте першим!
           </Reveal>
         ) : (
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:mt-12 sm:gap-5 lg:grid-cols-4">
             {approved.slice(0, 8).map((r, i) => (
               <Reveal
                 key={r.id}
                 delay={(i % 4) * 0.08}
-                className="flex h-full flex-col rounded-3xl bg-cream/5 p-6 ring-1 ring-cream/10 backdrop-blur"
+                className="flex h-full flex-col rounded-2xl bg-cream/5 p-3.5 ring-1 ring-cream/10 backdrop-blur sm:rounded-3xl sm:p-6"
               >
                 <Stars value={r.rating} />
-                <p className="mt-4 flex-1 leading-relaxed text-cream/90">“{r.text}”</p>
-                <p className="mt-5 font-display text-lg font-semibold">{r.name}</p>
+                <p className="mt-2.5 line-clamp-5 flex-1 text-sm leading-relaxed text-cream/90 sm:mt-4 sm:line-clamp-none sm:text-base">
+                  “{r.text}”
+                </p>
+                <p className="mt-3 font-display text-sm font-semibold sm:mt-5 sm:text-lg">{r.name}</p>
               </Reveal>
             ))}
           </div>

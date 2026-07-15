@@ -13,12 +13,14 @@ export function Gallery({ images }: { images: GalleryImage[] }) {
   const [index, setIndex] = useState<number | null>(null);
   const sorted = [...images].sort((a, b) => a.sortOrder - b.sortOrder);
 
-  // Групуємо фото в стосики по 3 (останній може мати менше).
-  const stacks: { img: GalleryImage; index: number }[][] = [];
+  // Групуємо фото в стосики по 3 і лишаємо тільки 2 повні стосики —
+  // рівно 6 світлин, поруч в один ряд (без «хвоста» з неповним стосиком).
+  const allStacks: { img: GalleryImage; index: number }[][] = [];
   sorted.forEach((img, i) => {
-    if (i % 3 === 0) stacks.push([]);
-    stacks[stacks.length - 1].push({ img, index: i });
+    if (i % 3 === 0) allStacks.push([]);
+    allStacks[allStacks.length - 1].push({ img, index: i });
   });
+  const stacks = allStacks.filter((s) => s.length === 3).slice(0, 2);
 
   const close = useCallback(() => setIndex(null), []);
   const prev = useCallback(
@@ -48,7 +50,7 @@ export function Gallery({ images }: { images: GalleryImage[] }) {
   if (!sorted.length) return null;
 
   return (
-    <section id="gallery" className="scroll-mt-20 py-20 sm:py-28">
+    <section id="gallery" className="scroll-mt-20 py-14 sm:py-28">
       <div className="container-x">
         <Reveal className="max-w-2xl">
           <p className="section-label">Галерея</p>
@@ -62,7 +64,7 @@ export function Gallery({ images }: { images: GalleryImage[] }) {
 
         {/* Віяла-стопки карток (display cards): картки в стосику, при наведенні
             обрана випрямляється і виходить на передній план. */}
-        <div className="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid grid-cols-2 gap-4 sm:mt-12 sm:gap-10">
           {stacks.map((stack, si) => (
             <Reveal key={si} delay={si * 0.08} className="relative">
               <div className="relative aspect-square">

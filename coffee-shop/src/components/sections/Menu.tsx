@@ -43,6 +43,7 @@ export function Menu({
   const reduced = usePrefersReducedMotion();
 
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const stripRef = useRef<HTMLDivElement>(null);
 
   const ordered = useMemo(
     () => [...categories].sort((a, b) => a.sortOrder - b.sortOrder),
@@ -117,8 +118,19 @@ export function Menu({
     window.scrollTo({ top: y, behavior: reduced ? 'auto' : 'smooth' });
   };
 
+  // Мобільна стрічка розділів «їде» слідом за активним чипом,
+  // щоб клієнт завжди бачив, у якому розділі перебуває (без вертикального стрибка).
+  useEffect(() => {
+    const strip = stripRef.current;
+    if (!strip || !activeSlug) return;
+    const chip = strip.querySelector<HTMLElement>(`[data-slug="${activeSlug}"]`);
+    if (!chip) return;
+    const left = chip.offsetLeft - strip.clientWidth / 2 + chip.clientWidth / 2;
+    strip.scrollTo({ left, behavior: reduced ? 'auto' : 'smooth' });
+  }, [activeSlug, reduced]);
+
   return (
-    <section id="menu" className="scroll-mt-20 bg-sand/40 py-20 sm:py-28">
+    <section id="menu" className="scroll-mt-20 bg-sand/40 py-14 sm:py-28">
       <div className="container-x">
         <Reveal className="max-w-2xl">
           <p className="section-label">Меню</p>
@@ -132,11 +144,15 @@ export function Menu({
         </Reveal>
 
         {/* Мобільна липка стрічка розділів */}
-        <div className="no-scrollbar sticky top-16 z-30 -mx-5 mt-8 flex gap-2 overflow-x-auto bg-sand/40 px-5 py-2 backdrop-blur lg:hidden">
+        <div
+          ref={stripRef}
+          className="no-scrollbar sticky top-16 z-30 -mx-5 mt-6 flex gap-2 overflow-x-auto bg-sand/40 px-5 py-2 backdrop-blur lg:hidden"
+        >
           {visibleCategories.map((c) => (
             <button
               key={c.slug}
               type="button"
+              data-slug={c.slug}
               onClick={() => scrollToSection(c.slug)}
               aria-current={activeSlug === c.slug}
               className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-all ${
@@ -215,12 +231,8 @@ export function Menu({
 
                   <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
                     {list.map((item, i) => (
-                      <motion.article
+                      <article
                         key={item.id}
-                        initial={reduced ? undefined : { opacity: 0, y: 18 }}
-                        whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: '-40px' }}
-                        transition={{ duration: 0.4, delay: (i % 3) * 0.05 }}
                         className="group card cursor-pointer overflow-hidden text-left ring-1 ring-espresso/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_50px_-14px_rgba(243,217,166,0.75)] hover:ring-2 hover:ring-honey/70 active:ring-honey"
                         onClick={() => setSelected(item)}
                       >
@@ -271,7 +283,7 @@ export function Menu({
                             </div>
                           </div>
                         </button>
-                      </motion.article>
+                      </article>
                     ))}
                   </div>
                 </div>

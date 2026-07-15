@@ -28,7 +28,7 @@ const perks = [
 
 export function About({ settings }: { settings: SiteSettings }) {
   return (
-    <section id="about" className="scroll-mt-20 py-20 sm:py-28">
+    <section id="about" className="scroll-mt-20 py-14 sm:py-28">
       <div className="container-x">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           {/* Фото інтер’єру */}
