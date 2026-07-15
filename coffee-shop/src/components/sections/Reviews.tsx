@@ -157,10 +157,10 @@ export function Reviews({ reviews }: { reviews: Review[] }) {
             <p className="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.28em] text-terracotta-soft">
               Відгуки
             </p>
-            <h2 className="text-4xl font-semibold sm:text-5xl">
+            <h2 className="text-3xl font-semibold sm:text-4xl lg:text-5xl">
               <HoverText text="Що кажуть гості" />
             </h2>
-            <p className="mt-4 text-lg text-cream/70">
+            <p className="mt-4 text-base text-cream/70 sm:text-lg">
               Ми цінуємо кожен відгук — він допомагає нам ставати кращими.
             </p>
           </Reveal>

@@ -81,13 +81,26 @@ function Person({ phase }: { phase: Phase }) {
 export function MascotScene() {
   const [phase, setPhase] = useState<Phase>('idle');
   const sceneRef = useRef<HTMLDivElement>(null);
+  const personRef = useRef<HTMLButtonElement>(null);
+  const cafeRef = useRef<HTMLDivElement>(null);
   const [runX, setRunX] = useState(0);
   const reduced = usePrefersReducedMotion();
 
   const run = () => {
     if (phase !== 'idle') return;
-    const w = sceneRef.current?.clientWidth ?? 320;
-    setRunX(w * 0.46);
+    const person = personRef.current;
+    const cafe = cafeRef.current;
+    if (person && cafe) {
+      // Рахуємо реальну відстань до дверей кав’ярні (ліва третина будиночка) —
+      // працює однаково точно на будь-якому розмірі екрана, без магічних чисел.
+      const personRect = person.getBoundingClientRect();
+      const cafeRect = cafe.getBoundingClientRect();
+      const doorX = cafeRect.left + cafeRect.width * 0.3;
+      setRunX(doorX - (personRect.left + personRect.width / 2));
+    } else {
+      const w = sceneRef.current?.clientWidth ?? 320;
+      setRunX(w * 0.46);
+    }
     setPhase('running');
   };
 
@@ -95,30 +108,33 @@ export function MascotScene() {
 
   return (
     <div className="flex h-full flex-col">
-      <p className="text-xs font-semibold uppercase tracking-[0.28em] text-terracotta-soft">
+      <p className="hidden text-xs font-semibold uppercase tracking-[0.28em] text-terracotta-soft sm:block">
         Ласкаво просимо
       </p>
 
+      {/* Компактна горизонтальна сценка на телефоні, вища — на десктопі */}
       <div
         ref={sceneRef}
-        className="relative mt-4 flex-1 overflow-hidden rounded-2xl"
+        className="relative h-36 overflow-hidden rounded-2xl sm:h-44 sm:mt-4 md:h-auto md:min-h-[300px] md:flex-1"
         style={{
-          minHeight: 300,
           background:
             'linear-gradient(180deg, #3a2c20 0%, #2f2620 60%, #241d18 100%)',
         }}
       >
         {/* зорі / боке */}
-        <span className="pointer-events-none absolute left-6 top-6 h-1 w-1 rounded-full bg-honey/60" />
-        <span className="pointer-events-none absolute left-16 top-12 h-1.5 w-1.5 rounded-full bg-honey/40" />
-        <span className="pointer-events-none absolute right-10 top-8 h-1 w-1 rounded-full bg-honey/50" />
+        <span className="pointer-events-none absolute left-6 top-4 h-1 w-1 rounded-full bg-honey/60 sm:top-6" />
+        <span className="pointer-events-none absolute left-16 top-8 h-1.5 w-1.5 rounded-full bg-honey/40 sm:top-12" />
+        <span className="pointer-events-none absolute right-10 top-5 h-1 w-1 rounded-full bg-honey/50 sm:top-8" />
 
         {/* земля */}
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-[#1c1712]" />
-        <div className="absolute inset-x-0 bottom-16 h-px bg-honey/15" />
+        <div className="absolute inset-x-0 bottom-0 h-8 bg-[#1c1712] sm:h-10 md:h-16" />
+        <div className="absolute inset-x-0 bottom-8 h-px bg-honey/15 sm:bottom-10 md:bottom-16" />
 
         {/* кав’ярня */}
-        <div className="absolute bottom-9 right-2 h-44 w-44 sm:right-3">
+        <div
+          ref={cafeRef}
+          className="absolute bottom-5 right-2 h-24 w-24 sm:bottom-6 sm:h-28 sm:w-28 md:bottom-9 md:h-44 md:w-44 md:right-3"
+        >
           <button
             type="button"
             onClick={phase === 'inside' ? replay : undefined}
@@ -131,6 +147,7 @@ export function MascotScene() {
 
         {/* маскот */}
         <motion.button
+          ref={personRef}
           type="button"
           onClick={run}
           initial={false}
@@ -147,7 +164,7 @@ export function MascotScene() {
           onAnimationComplete={() => {
             if (phase === 'running') setPhase('inside');
           }}
-          className={`absolute bottom-[52px] left-4 h-28 w-20 cursor-pointer ${
+          className={`absolute bottom-6 left-3 h-16 w-11 cursor-pointer sm:bottom-8 sm:h-20 sm:w-14 md:bottom-[52px] md:left-4 md:h-28 md:w-20 ${
             phase === 'running' ? 'mascot-running' : phase === 'idle' ? 'mascot-idle' : ''
           }`}
           aria-label="Клікни на мене"
@@ -164,11 +181,11 @@ export function MascotScene() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3 }}
-              className="absolute left-3 top-6"
+              className="absolute left-2 top-3 sm:left-3 sm:top-6"
             >
-              <div className="relative rounded-2xl bg-cream px-4 py-2 text-sm font-semibold text-espresso shadow-soft">
+              <div className="relative rounded-xl bg-cream px-2.5 py-1.5 text-[11px] font-semibold text-espresso shadow-soft sm:rounded-2xl sm:px-4 sm:py-2 sm:text-sm">
                 Клікни на мене 👆
-                <span className="absolute -bottom-1.5 left-8 h-3 w-3 rotate-45 bg-cream" />
+                <span className="absolute -bottom-1.5 left-6 h-3 w-3 rotate-45 bg-cream sm:left-8" />
               </div>
             </motion.div>
           )}
@@ -182,11 +199,11 @@ export function MascotScene() {
               initial={{ opacity: 0, y: 10, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.35, delay: 0.15 }}
-              className="absolute right-6 top-4"
+              className="absolute right-11 top-2 sm:right-6 sm:top-4"
             >
-              <div className="relative rounded-2xl bg-terracotta px-4 py-2 text-sm font-semibold text-cream shadow-soft">
+              <div className="relative rounded-xl bg-terracotta px-2.5 py-1.5 text-[11px] font-semibold text-cream shadow-soft sm:rounded-2xl sm:px-4 sm:py-2 sm:text-sm">
                 Завітай до мене! ☕
-                <span className="absolute -bottom-1.5 right-8 h-3 w-3 rotate-45 bg-terracotta" />
+                <span className="absolute -bottom-1.5 right-6 h-3 w-3 rotate-45 bg-terracotta sm:right-8" />
               </div>
             </motion.div>
           )}
@@ -198,9 +215,9 @@ export function MascotScene() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="absolute bottom-2 left-0 right-0 text-center text-[11px] text-cream/45"
+            className="absolute bottom-1 left-0 right-0 text-center text-[9px] text-cream/45 sm:bottom-2 sm:text-[11px]"
           >
-            Натисніть на кав’ярню, щоб повторити ↺
+            Натисніть, щоб повторити ↺
           </motion.p>
         )}
       </div>

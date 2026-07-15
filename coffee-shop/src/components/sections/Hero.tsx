@@ -57,7 +57,7 @@ export function Hero({ settings }: { settings: SiteSettings }) {
           {settings.name} · {settings.tagline}
         </motion.p>
 
-        <h1 className="max-w-4xl font-display text-5xl font-semibold leading-[1.04] sm:text-6xl lg:text-7xl">
+        <h1 className="max-w-4xl font-display text-4xl font-semibold leading-[1.05] sm:text-6xl lg:text-7xl">
           {titleWords.map((word, i) => (
             <motion.span
               key={i}
@@ -73,7 +73,7 @@ export function Hero({ settings }: { settings: SiteSettings }) {
 
         <motion.p
           variants={item}
-          className="mt-7 max-w-xl text-lg leading-relaxed text-cream/75"
+          className="mt-6 max-w-xl text-base leading-relaxed text-cream/75 sm:mt-7 sm:text-lg"
         >
           {settings.heroSubtitle}
         </motion.p>

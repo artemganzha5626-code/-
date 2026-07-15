@@ -207,7 +207,7 @@ export function PeekMascot({
   return (
     <span
       aria-hidden
-      className={`pointer-events-none absolute bottom-1 z-[5] block w-14 drop-shadow-[0_6px_12px_rgba(59,46,37,0.35)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:translate-x-0 motion-reduce:hidden sm:w-16 ${pos} ${className}`}
+      className={`pointer-events-none absolute bottom-1 z-[5] hidden w-14 drop-shadow-[0_6px_12px_rgba(59,46,37,0.35)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:translate-x-0 motion-reduce:hidden sm:block sm:w-16 ${pos} ${className}`}
     >
       <Mascot className="h-auto w-full" />
     </span>

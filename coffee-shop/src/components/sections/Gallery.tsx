@@ -52,10 +52,10 @@ export function Gallery({ images }: { images: GalleryImage[] }) {
       <div className="container-x">
         <Reveal className="max-w-2xl">
           <p className="section-label">Галерея</p>
-          <h2 className="text-4xl font-semibold text-espresso sm:text-5xl">
+          <h2 className="text-3xl font-semibold text-espresso sm:text-4xl lg:text-5xl">
             <HoverText text="Атмосфера в деталях" />
           </h2>
-          <p className="mt-4 text-lg text-mocha">
+          <p className="mt-4 text-base text-mocha sm:text-lg">
             Живі кадри страв, кави та простору. Натисніть, щоб роздивитися ближче.
           </p>
         </Reveal>

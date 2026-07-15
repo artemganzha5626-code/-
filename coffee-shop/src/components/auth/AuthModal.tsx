@@ -95,10 +95,10 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 40 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="relative z-10 grid w-full max-w-3xl overflow-hidden rounded-t-3xl bg-milk shadow-soft sm:rounded-3xl md:grid-cols-2"
+            className="relative z-10 grid max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-t-3xl bg-milk shadow-soft sm:rounded-3xl md:grid-cols-2 md:overflow-hidden"
           >
             {/* Форма */}
-            <div className="p-6 sm:p-8">
+            <div className="order-2 p-6 sm:p-8 md:order-1">
               <div className="flex items-center justify-between">
                 <div className="inline-flex rounded-full bg-sand/60 p-1 text-sm font-medium">
                   <button
@@ -116,14 +116,6 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
                     Реєстрація
                   </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="flex h-9 w-9 items-center justify-center rounded-full text-espresso hover:bg-espresso/5 md:hidden"
-                  aria-label="Закрити"
-                >
-                  <CloseIcon className="h-5 w-5" />
-                </button>
               </div>
 
               <h2 className="mt-6 font-display text-2xl font-semibold text-espresso">
@@ -171,8 +163,9 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
               </form>
             </div>
 
-            {/* Інтерактивна сценка з маскотом */}
-            <div className="relative hidden flex-col justify-center bg-espresso p-8 text-cream md:flex">
+            {/* Інтерактивна сценка з маскотом — компактна й горизонтальна на телефоні,
+                на повну висоту праворуч від форми на десктопі */}
+            <div className="relative order-1 flex flex-col justify-center bg-espresso p-4 text-cream sm:p-6 md:order-2 md:p-8">
               <button
                 type="button"
                 onClick={onClose}

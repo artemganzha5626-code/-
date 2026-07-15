@@ -26,10 +26,10 @@ export function Contacts({ settings }: { settings: SiteSettings }) {
       <div className="container-x">
         <Reveal className="max-w-2xl">
           <p className="section-label">Контакти</p>
-          <h2 className="text-4xl font-semibold text-espresso sm:text-5xl">
+          <h2 className="text-3xl font-semibold text-espresso sm:text-4xl lg:text-5xl">
             <HoverText text="Завітайте на каву" />
           </h2>
-          <p className="mt-4 text-lg text-mocha">
+          <p className="mt-4 text-base text-mocha sm:text-lg">
             Ми поруч і завжди раді гостям. Пишіть в Instagram або прокладіть маршрут — до
             зустрічі!
           </p>

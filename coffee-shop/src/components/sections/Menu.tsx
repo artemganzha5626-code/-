@@ -122,10 +122,10 @@ export function Menu({
       <div className="container-x">
         <Reveal className="max-w-2xl">
           <p className="section-label">Меню</p>
-          <h2 className="text-4xl font-semibold text-espresso sm:text-5xl">
+          <h2 className="text-3xl font-semibold text-espresso sm:text-4xl lg:text-5xl">
             <HoverText text="Те, що варто скуштувати" />
           </h2>
-          <p className="mt-4 text-lg text-mocha">
+          <p className="mt-4 text-base text-mocha sm:text-lg">
             Кава, чай, сніданки, десерти та свіжа випічка. Гортайте розділи —
             навігація збоку завжди підкаже, де ви.
           </p>
@@ -213,7 +213,7 @@ export function Menu({
                     <span className="text-sm text-mocha/50">{list.length}</span>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                  <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
                     {list.map((item, i) => (
                       <motion.article
                         key={item.id}
@@ -235,36 +235,37 @@ export function Menu({
                           >
                             <MenuVisual
                               item={item}
-                              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 30vw"
+                              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 30vw"
+                              iconClassName="h-1/3 w-1/3 max-h-10 max-w-10 sm:max-h-20 sm:max-w-20"
                             />
-                            <div className="absolute left-3 top-3 z-[4]">
+                            <div className="absolute left-1.5 top-1.5 z-[4] sm:left-3 sm:top-3">
                               <BadgePills badges={item.badges} />
                             </div>
                             <span className="spotlight-glow" aria-hidden />
                             <PeekMascot variant={variant} side={i % 2 === 0 ? 'right' : 'left'} />
                           </div>
-                          <div className="p-5">
+                          <div className="p-2.5 sm:p-5">
                             {item.group && (
-                              <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-terracotta/80">
+                              <p className="mb-0.5 truncate text-[9px] font-semibold uppercase tracking-wider text-terracotta/80 sm:mb-1 sm:text-[11px]">
                                 {item.group}
                               </p>
                             )}
-                            <div className="flex items-start justify-between gap-3">
-                              <h4 className="font-display text-xl font-semibold text-espresso">
+                            <div className="flex items-start justify-between gap-1.5 sm:gap-3">
+                              <h4 className="font-display text-sm font-semibold leading-tight text-espresso sm:text-xl">
                                 {item.name}
                               </h4>
-                              <span className="whitespace-nowrap font-display text-lg font-semibold text-terracotta">
+                              <span className="whitespace-nowrap font-display text-xs font-semibold text-terracotta sm:text-lg">
                                 {item.price} ₴
                               </span>
                             </div>
                             {item.description && (
-                              <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-mocha">
+                              <p className="mt-1 line-clamp-2 hidden text-sm leading-relaxed text-mocha sm:block">
                                 {item.description}
                               </p>
                             )}
-                            <div className="mt-3 flex items-center gap-1.5 text-mocha/70">
-                              <HeartIcon className="h-4 w-4 text-terracotta" />
-                              <span className="text-xs tabular-nums">
+                            <div className="mt-1.5 flex items-center gap-1 text-mocha/70 sm:mt-3 sm:gap-1.5">
+                              <HeartIcon className="h-3 w-3 text-terracotta sm:h-4 sm:w-4" />
+                              <span className="text-[10px] tabular-nums sm:text-xs">
                                 {likeCounts[item.id] ?? 0}
                               </span>
                             </div>

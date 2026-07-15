@@ -56,7 +56,7 @@ export function About({ settings }: { settings: SiteSettings }) {
           <div>
             <Reveal>
               <p className="section-label">Про кав’ярню</p>
-              <h2 className="text-4xl font-semibold text-espresso sm:text-5xl">
+              <h2 className="text-3xl font-semibold text-espresso sm:text-4xl lg:text-5xl">
                 <HoverText text="Кава для сусідів, друзів і всіх, хто заходить" />
               </h2>
             </Reveal>
